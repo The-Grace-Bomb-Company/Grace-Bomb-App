@@ -1,7 +1,8 @@
-import 'dart:math';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:grace_bomb/web_apis/get_dropped_bombs.dart';
 import 'package:latlong2/latlong.dart';
 
 class Map extends StatelessWidget {
@@ -11,47 +12,82 @@ class Map extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => FlutterMap(
-        options:
-            const MapOptions(initialCenter: defaultPosition, initialZoom: 15),
+        options: const MapOptions(
+          initialCenter: defaultPosition,
+          initialZoom: 15,
+        ),
         children: [
           TileLayer(
             urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
             userAgentPackageName: 'dev.fleaflet.flutter_map.example',
           ),
-          DroppedBombsLayer()
+          const DroppedBombsLayer()
         ],
       );
 }
 
-class DroppedBombsLayer extends StatelessWidget {
+class DroppedBombsLayer extends StatefulWidget {
   const DroppedBombsLayer({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final camera = MapCamera.of(context);
-    final height = camera.visibleBounds.north - camera.visibleBounds.south;
-    final width = camera.visibleBounds.west - camera.visibleBounds.east;
+  State<StatefulWidget> createState() => DroppedBombsLayerState();
+}
 
-    final random = Random(camera.hashCode);
-    randomPosition() => LatLng(
-          random.nextDouble() * height + camera.visibleBounds.south,
-          random.nextDouble() * width + camera.visibleBounds.east,
+class DroppedBombsLayerState extends State<DroppedBombsLayer> {
+  final List<DroppedBomb> droppedBombs = [];
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, () async {
+      final controller = MapController.of(context);
+      controller.mapEventStream.listen(handleMapPositionChange);
+
+      final camera = MapCamera.of(context);
+      final initBombs = await getDroppedBombs(
+        camera.visibleBounds.north,
+        camera.visibleBounds.east,
+        camera.visibleBounds.south,
+        camera.visibleBounds.west,
+      );
+      setState(() {
+        droppedBombs.addAll(initBombs);
+      });
+    });
+  }
+
+  Future<void> handleMapPositionChange(MapEvent event) async {
+    switch (event) {
+      case MapEventMoveEnd():
+      case MapEventRotateEnd():
+      case MapEventDoubleTapZoomEnd():
+      case MapEventFlingAnimationEnd():
+        final newBombs = await getDroppedBombs(
+          event.camera.visibleBounds.north,
+          event.camera.visibleBounds.east,
+          event.camera.visibleBounds.south,
+          event.camera.visibleBounds.west,
         );
+        setState(() {
+          droppedBombs.addAll(newBombs);
+        });
+    }
+  }
 
-    final randomBombs = List.generate(
-      10,
-      (index) => Marker(
-        point: randomPosition(),
-        height: 60,
-        child: SvgPicture.asset(
-          'assets/wild-bomb.svg',
-        ),
-      ),
-    );
+  @override
+  Widget build(BuildContext context) {
+    final markers = droppedBombs
+        .map(
+          (droppedBomb) => Marker(
+            point: LatLng(droppedBomb.latitude, droppedBomb.longitude),
+            height: 60,
+            child: SvgPicture.asset(
+              'assets/wild-bomb.svg',
+            ),
+          ),
+        )
+        .toList();
 
-    return MarkerLayer(
-      alignment: Alignment.topCenter,
-      markers: randomBombs,
-    );
+    return MarkerLayer(markers: markers);
   }
 }
