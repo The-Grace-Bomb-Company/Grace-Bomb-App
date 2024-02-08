@@ -13,9 +13,10 @@ class Map extends StatelessWidget {
   @override
   Widget build(BuildContext context) => FlutterMap(
         options: const MapOptions(
-          initialCenter: defaultPosition,
-          initialZoom: 15,
-        ),
+            initialCenter: defaultPosition,
+            initialZoom: 15,
+            interactionOptions: InteractionOptions(
+                flags: InteractiveFlag.all ^ InteractiveFlag.rotate)),
         children: [
           TileLayer(
             urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
