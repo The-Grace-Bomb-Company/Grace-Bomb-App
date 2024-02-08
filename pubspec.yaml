@@ -39,6 +39,7 @@ dependencies:
   latlong2: ^0.9.0
   flutter_svg: ^2.0.9
   lorem_ipsum_generator: ^0.0.3
+  flutter_map_animations: ^0.5.3
 
 dev_dependencies:
   flutter_test:

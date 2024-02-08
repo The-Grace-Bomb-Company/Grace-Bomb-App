@@ -1,19 +1,31 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map_animations/flutter_map_animations.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:grace_bomb/web_apis/get_dropped_bombs.dart';
 import 'package:latlong2/latlong.dart';
 
-class Map extends StatelessWidget {
+class Map extends StatefulWidget {
   const Map({super.key});
 
   static const defaultPosition = LatLng(30.41216, -91.18401);
 
   @override
+  State<Map> createState() => _MapState();
+}
+
+class _MapState extends State<Map> with TickerProviderStateMixin {
+  late final animatedMapController = AnimatedMapController(
+    vsync: this,
+    duration: const Duration(milliseconds: 500),
+    curve: Curves.easeInOut,
+  );
+
+  @override
   Widget build(BuildContext context) => FlutterMap(
+        mapController: animatedMapController.mapController,
         options: const MapOptions(
-            initialCenter: defaultPosition,
+            initialCenter: Map.defaultPosition,
             initialZoom: 15,
             interactionOptions: InteractionOptions(
                 flags: InteractiveFlag.all ^ InteractiveFlag.rotate)),
@@ -22,13 +34,17 @@ class Map extends StatelessWidget {
             urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
             userAgentPackageName: 'dev.fleaflet.flutter_map.example',
           ),
-          const DroppedBombsLayer()
+          DroppedBombsLayer(
+            animatedMapController: animatedMapController,
+          )
         ],
       );
 }
 
 class DroppedBombsLayer extends StatefulWidget {
-  const DroppedBombsLayer({super.key});
+  final AnimatedMapController animatedMapController;
+
+  const DroppedBombsLayer({super.key, required this.animatedMapController});
 
   @override
   State<StatefulWidget> createState() => DroppedBombsLayerState();
@@ -36,6 +52,7 @@ class DroppedBombsLayer extends StatefulWidget {
 
 class DroppedBombsLayerState extends State<DroppedBombsLayer> {
   final List<DroppedBomb> droppedBombs = [];
+  DroppedBomb? selectedBomb;
 
   @override
   void initState() {
@@ -43,36 +60,9 @@ class DroppedBombsLayerState extends State<DroppedBombsLayer> {
     Future.delayed(Duration.zero, () async {
       final controller = MapController.of(context);
       controller.mapEventStream.listen(handleMapPositionChange);
-
       final camera = MapCamera.of(context);
-      final initBombs = await getDroppedBombs(
-        camera.visibleBounds.north,
-        camera.visibleBounds.east,
-        camera.visibleBounds.south,
-        camera.visibleBounds.west,
-      );
-      setState(() {
-        droppedBombs.addAll(initBombs);
-      });
+      await loadBombsInCameraView(camera);
     });
-  }
-
-  Future<void> handleMapPositionChange(MapEvent event) async {
-    switch (event) {
-      case MapEventMoveEnd():
-      case MapEventRotateEnd():
-      case MapEventDoubleTapZoomEnd():
-      case MapEventFlingAnimationEnd():
-        final newBombs = await getDroppedBombs(
-          event.camera.visibleBounds.north,
-          event.camera.visibleBounds.east,
-          event.camera.visibleBounds.south,
-          event.camera.visibleBounds.west,
-        );
-        setState(() {
-          droppedBombs.addAll(newBombs);
-        });
-    }
   }
 
   @override
@@ -84,6 +74,8 @@ class DroppedBombsLayerState extends State<DroppedBombsLayer> {
             height: 60,
             child: DroppedBombMarker(
               droppedBomb: droppedBomb,
+              isSelected: droppedBomb == selectedBomb,
+              onTap: handleBombTap,
             ),
           ),
         )
@@ -91,20 +83,51 @@ class DroppedBombsLayerState extends State<DroppedBombsLayer> {
 
     return MarkerLayer(markers: markers);
   }
+
+  void handleBombTap(DroppedBomb tappedBomb) => setState(() {
+        if (tappedBomb == selectedBomb) {
+          selectedBomb = null;
+        } else {
+          selectedBomb = tappedBomb;
+
+          widget.animatedMapController.animateTo(
+              dest: LatLng(tappedBomb.latitude, tappedBomb.longitude));
+        }
+      });
+
+  Future<void> handleMapPositionChange(MapEvent event) async {
+    switch (event) {
+      case MapEventMoveEnd():
+      case MapEventRotateEnd():
+      case MapEventDoubleTapZoomEnd():
+      case MapEventFlingAnimationEnd():
+        await loadBombsInCameraView(event.camera);
+    }
+  }
+
+  Future<void> loadBombsInCameraView(MapCamera camera) async {
+    final newBombs = await getDroppedBombs(
+      camera.visibleBounds.north,
+      camera.visibleBounds.east,
+      camera.visibleBounds.south,
+      camera.visibleBounds.west,
+    );
+    setState(() {
+      droppedBombs.addAll(newBombs);
+    });
+  }
 }
 
-class DroppedBombMarker extends StatefulWidget {
+class DroppedBombMarker extends StatelessWidget {
   final DroppedBomb droppedBomb;
-  final void Function(DroppedBomb droppedBomb)? onTap;
+  final bool isSelected;
+  final void Function(DroppedBomb tappedBomb)? onTap;
 
-  const DroppedBombMarker({super.key, required this.droppedBomb, this.onTap});
-
-  @override
-  State<StatefulWidget> createState() => DroppedBombMarkerState();
-}
-
-class DroppedBombMarkerState extends State<DroppedBombMarker> {
-  bool isSelected = false;
+  const DroppedBombMarker(
+      {super.key,
+      required this.droppedBomb,
+      this.onTap,
+      required this.isSelected});
 
   @override
   Widget build(BuildContext context) {
@@ -112,9 +135,7 @@ class DroppedBombMarkerState extends State<DroppedBombMarker> {
         isSelected ? 'assets/wild-bomb-outlined.svg' : 'assets/wild-bomb.svg';
 
     return GestureDetector(
-      onTap: () => setState(() {
-        isSelected = !isSelected;
-      }),
+      onTap: () => onTap?.call(droppedBomb),
       child: SvgPicture.asset(
         assetPath,
       ),
