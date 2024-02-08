@@ -13,11 +13,11 @@ class Home extends StatelessWidget {
             child: Stack(
               children: [
                 Map(),
-                TopBar(),
+                // TopBar(),
               ],
             ),
           ),
-          BottomBar()
+          // BottomBar()
         ],
       );
 }
