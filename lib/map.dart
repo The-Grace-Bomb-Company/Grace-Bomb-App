@@ -81,13 +81,42 @@ class DroppedBombsLayerState extends State<DroppedBombsLayer> {
           (droppedBomb) => Marker(
             point: LatLng(droppedBomb.latitude, droppedBomb.longitude),
             height: 60,
-            child: SvgPicture.asset(
-              'assets/wild-bomb.svg',
+            child: DroppedBombMarker(
+              droppedBomb: droppedBomb,
             ),
           ),
         )
         .toList();
 
     return MarkerLayer(markers: markers);
+  }
+}
+
+class DroppedBombMarker extends StatefulWidget {
+  final DroppedBomb droppedBomb;
+  final void Function(DroppedBomb droppedBomb)? onTap;
+
+  const DroppedBombMarker({super.key, required this.droppedBomb, this.onTap});
+
+  @override
+  State<StatefulWidget> createState() => DroppedBombMarkerState();
+}
+
+class DroppedBombMarkerState extends State<DroppedBombMarker> {
+  bool isSelected = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final assetPath =
+        isSelected ? 'assets/wild-bomb-outlined.svg' : 'assets/wild-bomb.svg';
+
+    return GestureDetector(
+      onTap: () => setState(() {
+        isSelected = !isSelected;
+      }),
+      child: SvgPicture.asset(
+        assetPath,
+      ),
+    );
   }
 }
