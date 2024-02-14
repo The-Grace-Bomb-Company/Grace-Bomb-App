@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_animations/flutter_map_animations.dart';
@@ -11,106 +13,135 @@ class Map extends StatefulWidget {
   static const defaultPosition = LatLng(30.41216, -91.18401);
 
   @override
-  State<Map> createState() => _MapState();
+  State<Map> createState() => MapState();
 }
 
-class _MapState extends State<Map> with TickerProviderStateMixin {
+class MapState extends State<Map> with TickerProviderStateMixin {
+  final mapController = MapController();
   late final animatedMapController = AnimatedMapController(
     vsync: this,
     duration: const Duration(milliseconds: 500),
     curve: Curves.easeInOut,
+    mapController: mapController,
   );
 
-  @override
-  Widget build(BuildContext context) => FlutterMap(
-        mapController: animatedMapController.mapController,
-        options: const MapOptions(
-            initialCenter: Map.defaultPosition,
-            initialZoom: 15,
-            interactionOptions: InteractionOptions(
-                flags: InteractiveFlag.all ^ InteractiveFlag.rotate)),
-        children: [
-          TileLayer(
-            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-            userAgentPackageName: 'dev.fleaflet.flutter_map.example',
-          ),
-          DroppedBombsLayer(
-            animatedMapController: animatedMapController,
-          )
-        ],
-      );
-}
-
-class DroppedBombsLayer extends StatefulWidget {
-  final AnimatedMapController animatedMapController;
-
-  const DroppedBombsLayer({super.key, required this.animatedMapController});
-
-  @override
-  State<StatefulWidget> createState() => DroppedBombsLayerState();
-}
-
-class DroppedBombsLayerState extends State<DroppedBombsLayer> {
   final List<DroppedBomb> droppedBombs = [];
+
   DroppedBomb? selectedBomb;
 
   @override
-  void initState() {
-    super.initState();
-    Future.delayed(Duration.zero, () async {
-      final controller = MapController.of(context);
-      controller.mapEventStream.listen(handleMapPositionChange);
-      final camera = MapCamera.of(context);
-      await loadBombsInCameraView(camera);
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        FlutterMap(
+          mapController: animatedMapController.mapController,
+          options: MapOptions(
+            initialCenter: Map.defaultPosition,
+            initialZoom: 15,
+            interactionOptions: const InteractionOptions(
+              flags: InteractiveFlag.all ^ InteractiveFlag.rotate,
+            ),
+            onMapEvent: handleMapEvent,
+            onMapReady: loadBombsInCameraView,
+            onTap: handleMapTap,
+          ),
+          children: [
+            TileLayer(
+              urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+              userAgentPackageName: 'dev.fleaflet.flutter_map.example',
+            ),
+            MarkerLayer(
+              markers: droppedBombs
+                  .map(
+                    (droppedBomb) => Marker(
+                      point:
+                          LatLng(droppedBomb.latitude, droppedBomb.longitude),
+                      height: 60,
+                      child: DroppedBombMarker(
+                        droppedBomb: droppedBomb,
+                        isSelected: droppedBomb == selectedBomb,
+                        onTap: handleBombTap,
+                      ),
+                    ),
+                  )
+                  .toList(),
+            ),
+          ],
+        ),
+        selectedBomb == null
+            ? const SizedBox.shrink()
+            : Stack(
+                children: [
+                  Center(
+                    child: SvgPicture.asset('assets/bomb-preview-shadow.svg'),
+                  ),
+                  Center(
+                    child:
+                        SvgPicture.asset('assets/bomb-preview-background.svg'),
+                  ),
+                  Center(
+                    child: Text(
+                      selectedBomb!.title,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              )
+      ],
+    );
+  }
+
+  void handleMapTap(tapPosition, point) {
+    setState(() {
+      selectedBomb = null;
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final markers = droppedBombs
-        .map(
-          (droppedBomb) => Marker(
-            point: LatLng(droppedBomb.latitude, droppedBomb.longitude),
-            height: 60,
-            child: DroppedBombMarker(
-              droppedBomb: droppedBomb,
-              isSelected: droppedBomb == selectedBomb,
-              onTap: handleBombTap,
-            ),
-          ),
-        )
-        .toList();
-
-    return MarkerLayer(markers: markers);
-  }
-
-  void handleBombTap(DroppedBomb tappedBomb) => setState(() {
-        if (tappedBomb == selectedBomb) {
-          selectedBomb = null;
-        } else {
-          selectedBomb = tappedBomb;
-
-          widget.animatedMapController.animateTo(
-              dest: LatLng(tappedBomb.latitude, tappedBomb.longitude));
-        }
+  void handleBombTap(DroppedBomb tappedBomb) {
+    if (tappedBomb == selectedBomb) {
+      setState(() {
+        selectedBomb = null;
+      });
+    } else {
+      setState(() {
+        selectedBomb = tappedBomb;
       });
 
-  Future<void> handleMapPositionChange(MapEvent event) async {
-    switch (event) {
-      case MapEventMoveEnd():
-      case MapEventRotateEnd():
-      case MapEventDoubleTapZoomEnd():
-      case MapEventFlingAnimationEnd():
-        await loadBombsInCameraView(event.camera);
+      final mediaQuery = MediaQuery.of(context);
+      final yOffset =
+          mediaQuery.size.height * 2 / 3 - mediaQuery.size.height / 2;
+      animatedMapController.animateTo(
+          dest: LatLng(tappedBomb.latitude, tappedBomb.longitude),
+          offset: Offset(0, yOffset));
     }
   }
 
-  Future<void> loadBombsInCameraView(MapCamera camera) async {
+  Future<void> handleMapEvent(MapEvent event) async {
+    switch (event) {
+      case MapEventMoveEnd():
+      case MapEventDoubleTapZoomEnd():
+      case MapEventFlingAnimationEnd():
+        await loadBombsInCameraView();
+        break;
+      case MapEventMoveStart():
+      case MapEventDoubleTapZoomStart():
+      case MapEventFlingAnimationStart():
+        setState(() {
+          selectedBomb = null;
+        });
+        break;
+    }
+  }
+
+  Future<void> loadBombsInCameraView() async {
     final newBombs = await getDroppedBombs(
-      camera.visibleBounds.north,
-      camera.visibleBounds.east,
-      camera.visibleBounds.south,
-      camera.visibleBounds.west,
+      mapController.camera.visibleBounds.north,
+      mapController.camera.visibleBounds.east,
+      mapController.camera.visibleBounds.south,
+      mapController.camera.visibleBounds.west,
     );
     setState(() {
       droppedBombs.addAll(newBombs);
