@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:grace_bomb/main.dart';
+import 'package:grace_bomb/app_colors.dart';
+import 'package:grace_bomb/map.dart';
 
 class BottomBar extends StatelessWidget {
   const BottomBar({super.key});
@@ -15,14 +16,14 @@ class BottomBar extends StatelessWidget {
     ]
         .map((icon) => IconButton(
               icon: Icon(icon),
-              color: lightYellow,
+              color: AppColors.lightYellow,
               onPressed: () {},
               iconSize: 30,
             ))
         .toList();
 
     return Container(
-      color: Colors.black,
+      color: AppColors.black,
       child: SafeArea(
           top: false,
           child: Padding(
