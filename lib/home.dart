@@ -10,7 +10,7 @@ class Home extends StatelessWidget {
           Expanded(
             child: Stack(
               children: [
-                Map(),
+                MapView(),
                 // TopBar(),
               ],
             ),

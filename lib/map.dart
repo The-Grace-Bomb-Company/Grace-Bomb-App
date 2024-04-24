@@ -12,16 +12,16 @@ import 'package:grace_bomb/selected_bomb_popup.dart';
 import 'package:grace_bomb/web_apis/get_dropped_bombs.dart';
 import 'package:latlong2/latlong.dart';
 
-class Map extends StatefulWidget {
-  const Map({super.key});
+class MapView extends StatefulWidget {
+  const MapView({super.key});
 
   static const defaultPosition = LatLng(30.41216, -91.18401);
 
   @override
-  State<Map> createState() => MapState();
+  State<MapView> createState() => MapViewState();
 }
 
-class MapState extends State<Map> with TickerProviderStateMixin {
+class MapViewState extends State<MapView> with TickerProviderStateMixin {
   final mapController = MapController();
   late final animatedMapController = AnimatedMapController(
     vsync: this,
@@ -30,7 +30,7 @@ class MapState extends State<Map> with TickerProviderStateMixin {
     mapController: mapController,
   );
 
-  final List<DroppedBomb> droppedBombs = [];
+  final Map<String, DroppedBomb> droppedBombs = {};
 
   DroppedBomb? selectedBomb;
 
@@ -41,7 +41,7 @@ class MapState extends State<Map> with TickerProviderStateMixin {
         FlutterMap(
           mapController: animatedMapController.mapController,
           options: MapOptions(
-            initialCenter: Map.defaultPosition,
+            initialCenter: MapView.defaultPosition,
             initialZoom: 15,
             interactionOptions: const InteractionOptions(
               flags: InteractiveFlag.all ^ InteractiveFlag.rotate,
@@ -57,7 +57,7 @@ class MapState extends State<Map> with TickerProviderStateMixin {
             ),
             MarkerLayer(
               markers: DroppedBombMarker.createMarkers(
-                  droppedBombs, selectedBomb, handleBombTap),
+                  droppedBombs.values, selectedBomb, handleBombTap),
             ),
           ],
         ),
@@ -112,14 +112,14 @@ class MapState extends State<Map> with TickerProviderStateMixin {
   }
 
   Future<void> loadBombsInCameraView() async {
-    final newBombs = await getDroppedBombs(
+    final newBombs = (await getDroppedBombs(
       mapController.camera.visibleBounds.north,
       mapController.camera.visibleBounds.east,
       mapController.camera.visibleBounds.south,
       mapController.camera.visibleBounds.west,
-    );
+    )).map((bomb) => MapEntry(bomb.id, bomb));
     setState(() {
-      droppedBombs.addAll(newBombs);
+      droppedBombs.addEntries(newBombs);
     });
   }
 }
@@ -151,7 +151,7 @@ class DroppedBombMarker extends StatelessWidget {
     );
   }
 
-  static List<Marker> createMarkers(List<DroppedBomb> droppedBombs,
+  static List<Marker> createMarkers(Iterable<DroppedBomb> droppedBombs,
       DroppedBomb? selectedBomb, void Function(DroppedBomb) handleBombTap) {
     return droppedBombs.map(
       (droppedBomb) {
