@@ -31,9 +31,7 @@ namespace azure_functions
             });
 
             // Define request parameters.
-            var spreadsheetId = "";
-            var range = "Grace Bomb App Data!A2:F";
-            var googleSheetData = await service.Spreadsheets.Values.Get(spreadsheetId, range).ExecuteAsync();
+            var googleSheetData = await service.Spreadsheets.Values.Get(Configuration.GoogleSpreadsheetId, Configuration.GoogleSpreadsheetRange).ExecuteAsync();
 
             var responseData = googleSheetData.Values.Aggregate(Enumerable.Empty<DroppedBomb>(), (droppedBombs, row) =>
             {

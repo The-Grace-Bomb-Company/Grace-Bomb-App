@@ -77,6 +77,10 @@ resource functionApp 'Microsoft.Web/sites@2023-01-01' = {
           name: 'google_credential'
           value: ''
         }
+        {
+          name: 'google_spreadsheet_range'
+          value: 'Grace Bomb App Data!A2:F'
+        }
       ]
     }
   }
