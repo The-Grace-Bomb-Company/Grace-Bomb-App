@@ -22,7 +22,7 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Build
-        run: dotnet build ./azure-functions  --configuration Release --output ./output
+        run: dotnet build ./api  --configuration Release --output ./output
 
       - name: Deploy to Azure Functions
         uses: Azure/functions-action@v1
