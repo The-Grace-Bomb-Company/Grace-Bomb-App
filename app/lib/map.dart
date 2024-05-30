@@ -1,15 +1,13 @@
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_animations/flutter_map_animations.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:grace_bomb/app_colors.dart';
-import 'package:grace_bomb/app_styles.dart';
 import 'package:grace_bomb/assets.dart';
 import 'package:grace_bomb/dropped_bomb.dart';
 import 'package:grace_bomb/selected_bomb_popup.dart';
-import 'package:grace_bomb/web_apis/get_dropped_bombs.dart';
+import 'package:grace_bomb/apis/get_dropped_bombs.dart';
 import 'package:latlong2/latlong.dart';
 
 class MapView extends StatefulWidget {
@@ -90,7 +88,8 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
           mediaQuery.size.height * 3 / 4 - mediaQuery.size.height / 2;
       animatedMapController.animateTo(
           dest: LatLng(tappedBomb.latitude, tappedBomb.longitude),
-          offset: Offset(0, yOffset));
+          offset: Offset(0, yOffset),
+          zoom: 15);
     }
   }
 
