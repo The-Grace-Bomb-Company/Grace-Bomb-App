@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Services;
@@ -39,12 +40,12 @@ namespace azure_functions
                 {
                     return droppedBombs.Append(new DroppedBomb
                     {
-                        CreatedDate = DateTime.Parse(row[0].ToString()),
-                        LocationName = row[1].ToString(),
-                        Latitude = double.Parse(row[2].ToString()),
-                        Longitude = double.Parse(row[3].ToString()),
-                        Description = row[4].ToString(),
-                        Id = Guid.Parse(row[5].ToString()),
+                        CreatedDate = DateTime.Parse(row[0].ToString()!, provider: default, DateTimeStyles.AssumeUniversal),
+                        LocationName = row[1].ToString()!,
+                        Latitude = double.Parse(row[2].ToString()!),
+                        Longitude = double.Parse(row[3].ToString()!),
+                        Description = row[4].ToString()!,
+                        Id = Guid.Parse(row[5].ToString()!),
                         Title = "no title",
                     });
                 }
