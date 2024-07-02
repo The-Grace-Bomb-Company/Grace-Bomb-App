@@ -44,6 +44,12 @@ resource functionApp 'Microsoft.Web/sites@2023-01-01' = {
     serverFarmId: hostingPlan.id
     siteConfig: {
       linuxFxVersion: 'DOTNET-ISOLATED|8.0'
+      cors:{
+        allowedOrigins: [
+          'https://*'
+          'http://*'
+        ]
+      }
       appSettings: [
         {
           name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
