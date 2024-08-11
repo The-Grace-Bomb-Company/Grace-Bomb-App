@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:grace_bomb/app_colors.dart';
-import 'package:grace_bomb/map.dart';
 
 class BottomBar extends StatelessWidget {
   const BottomBar({super.key});
