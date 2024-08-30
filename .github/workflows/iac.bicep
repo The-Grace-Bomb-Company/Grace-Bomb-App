@@ -46,8 +46,7 @@ resource functionApp 'Microsoft.Web/sites@2023-01-01' = {
       linuxFxVersion: 'DOTNET-ISOLATED|8.0'
       cors:{
         allowedOrigins: [
-          'https://*'
-          'http://*'
+          '*'
         ]
       }
       appSettings: [
