@@ -39,6 +39,7 @@ class SelectedBombPopup extends StatelessWidget {
                 SvgPicture.asset(Assets.wildBombOnMapSvg),
                 Container(
                   margin: const EdgeInsets.only(left: 5),
+                  width: MediaQuery.of(context).size.width - 80,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -48,14 +49,26 @@ class SelectedBombPopup extends StatelessWidget {
                       ),
                       Row(
                         children: [
-                          Text(
-                            bomb.locationName,
-                            style: AppStyles.subHeading,
-                          ),
-                          Text(
-                            ' · ${dateFormat.format(bomb.createdDate)}',
-                            style: AppStyles.subHeading,
-                          ),
+                          Column(children: [
+                            Container(
+                                width:
+                                    (MediaQuery.of(context).size.width - 80) /
+                                        2,
+                                child: Text(
+                                  bomb.locationName,
+                                  style: AppStyles.subHeading,
+                                ))
+                          ]),
+                          Column(children: [
+                            Container(
+                                width:
+                                    (MediaQuery.of(context).size.width - 80) /
+                                        2,
+                                child: Text(
+                                  ' · ${dateFormat.format(bomb.createdDate)}',
+                                  style: AppStyles.subHeading,
+                                ))
+                          ])
                         ],
                       )
                     ],
