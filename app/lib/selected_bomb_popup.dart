@@ -77,14 +77,71 @@ class SelectedBombPopup extends StatelessWidget {
                 ),
               ],
             ),
-            Text(
-              "${bomb.description} read more...",
-              maxLines: 4,
-              style: AppStyles.body,
-            )
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    bomb.description,
+                    maxLines: 4,
+                    style: AppStyles.body,
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => BombDetailPage(bomb: bomb),
+                      ),
+                    );
+                  },
+                  child: Text(
+                    " read more...",
+                    style: AppStyles.body.copyWith(color: Colors.blue),
+                  ),
+                ),
+              ],
+            ),
           ]),
         ),
       ),
     ]);
+  }
+}
+
+class BombDetailPage extends StatelessWidget {
+  final DroppedBomb bomb;
+
+  const BombDetailPage({super.key, required this.bomb});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(bomb.title),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              bomb.description,
+              style: AppStyles.body,
+            ),
+            SizedBox(height: 10),
+            Text(
+              'Location: ${bomb.locationName}',
+              style: AppStyles.subHeading,
+            ),
+            SizedBox(height: 10),
+            Text(
+              'Date: ${dateFormat.format(bomb.createdDate)}',
+              style: AppStyles.subHeading,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
