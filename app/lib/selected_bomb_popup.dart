@@ -17,15 +17,17 @@ class SelectedBombPopup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
+    final screenWidth = screenSize.width;
     final bottomMargin = screenSize.height / 4 +
         (DroppedBombMarker.defaultHeight *
             DroppedBombMarker.selectedScaleFactor /
             2);
+    final headerWidth = screenWidth - 80;
 
     return Stack(children: [
       Positioned(
         bottom: bottomMargin,
-        width: MediaQuery.of(context).size.width,
+        width: screenWidth,
         child: Container(
           margin: const EdgeInsets.all(10),
           padding: const EdgeInsets.all(10),
@@ -39,33 +41,32 @@ class SelectedBombPopup extends StatelessWidget {
                 SvgPicture.asset(Assets.wildBombOnMapSvg),
                 Container(
                   margin: const EdgeInsets.only(left: 5),
-                  width: MediaQuery.of(context).size.width - 80,
+                  width: screenWidth - 80,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         bomb.title,
+                        maxLines: 1,
                         style: AppStyles.heading,
                       ),
                       Row(
                         children: [
                           Column(children: [
                             Container(
-                                width:
-                                    (MediaQuery.of(context).size.width - 80) /
-                                        2,
+                                width: headerWidth * 0.6,
                                 child: Text(
                                   bomb.locationName,
+                                  maxLines: 1,
                                   style: AppStyles.subHeading,
                                 ))
                           ]),
                           Column(children: [
                             Container(
-                                width:
-                                    (MediaQuery.of(context).size.width - 80) /
-                                        2,
+                                width: headerWidth * 0.4,
                                 child: Text(
-                                  ' · ${dateFormat.format(bomb.createdDate)}',
+                                  ' ${dateFormat.format(bomb.createdDate)}',
+                                  maxLines: 1,
                                   style: AppStyles.subHeading,
                                 ))
                           ])
@@ -77,7 +78,7 @@ class SelectedBombPopup extends StatelessWidget {
               ],
             ),
             Text(
-              bomb.description,
+              "${bomb.description} read more...",
               maxLines: 4,
               style: AppStyles.body,
             )
