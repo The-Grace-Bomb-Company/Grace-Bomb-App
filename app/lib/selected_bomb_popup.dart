@@ -53,7 +53,7 @@ class SelectedBombPopup extends StatelessWidget {
                       Row(
                         children: [
                           Column(children: [
-                            Container(
+                            SizedBox(
                                 width: headerWidth * 0.6,
                                 child: Text(
                                   bomb.locationName,
@@ -62,7 +62,7 @@ class SelectedBombPopup extends StatelessWidget {
                                 ))
                           ]),
                           Column(children: [
-                            Container(
+                            SizedBox(
                                 width: headerWidth * 0.4,
                                 child: Text(
                                   ' ${dateFormat.format(bomb.createdDate)}',
@@ -85,7 +85,11 @@ class SelectedBombPopup extends StatelessWidget {
                     maxLines: 4,
                     style: AppStyles.body,
                   ),
-                ),
+                )
+              ],
+            ),
+            Row(
+              children: [
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -99,9 +103,9 @@ class SelectedBombPopup extends StatelessWidget {
                     " read more...",
                     style: AppStyles.body.copyWith(color: Colors.blue),
                   ),
-                ),
+                )
               ],
-            ),
+            )
           ]),
         ),
       ),
@@ -129,12 +133,12 @@ class BombDetailPage extends StatelessWidget {
               bomb.description,
               style: AppStyles.body,
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Text(
               'Location: ${bomb.locationName}',
               style: AppStyles.subHeading,
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Text(
               'Date: ${dateFormat.format(bomb.createdDate)}',
               style: AppStyles.subHeading,
