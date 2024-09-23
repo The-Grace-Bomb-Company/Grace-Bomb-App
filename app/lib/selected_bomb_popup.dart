@@ -22,15 +22,19 @@ class SelectedBombPopup extends StatelessWidget {
         (DroppedBombMarker.defaultHeight *
             DroppedBombMarker.selectedScaleFactor /
             2);
-    final headerWidth = screenWidth - 80;
+    const double margin = 10;
+    const double padding = 10;
+    const bombLogoWidth = 40;
+    final bodyWidth = screenWidth - margin * 2 - padding * 2;
+    final headerWidth = bodyWidth - bombLogoWidth;
 
     return Stack(children: [
       Positioned(
         bottom: bottomMargin,
         width: screenWidth,
         child: Container(
-          margin: const EdgeInsets.all(10),
-          padding: const EdgeInsets.all(10),
+          margin: const EdgeInsets.all(margin),
+          padding: const EdgeInsets.all(padding),
           decoration: BoxDecoration(
               color: AppColors.white,
               borderRadius: BorderRadius.circular(10),
@@ -99,11 +103,18 @@ class SelectedBombPopup extends StatelessWidget {
                       ),
                     );
                   },
-                  child: Text(
-                    " read more...",
-                    style: AppStyles.body.copyWith(color: Colors.blue),
+                  child: SizedBox(
+                    width: bodyWidth,
+                    child: Text(
+                      "READ MORE",
+                      style: AppStyles.body.copyWith(
+                        color: Colors.blue,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.right,
+                    ),
                   ),
-                )
+                ),
               ],
             )
           ]),
