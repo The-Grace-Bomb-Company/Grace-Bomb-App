@@ -50,7 +50,7 @@ class SelectedBombPopup extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        bomb.title,
+                        '#${bomb.title}',
                         maxLines: 1,
                         style: AppStyles.heading,
                       ),
@@ -133,26 +133,27 @@ class BombDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(bomb.title),
+        title: Text('#${bomb.title}'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const SizedBox(height: 10),
+            Text(
+              bomb.locationName,
+              style: AppStyles.subHeading,
+            ),
+            const SizedBox(height: 10),
+            Text(
+              dateFormat.format(bomb.createdDate),
+              style: AppStyles.subHeading,
+            ),
+            const SizedBox(height: 10),
             Text(
               bomb.description,
               style: AppStyles.body,
-            ),
-            const SizedBox(height: 10),
-            Text(
-              'Location: ${bomb.locationName}',
-              style: AppStyles.subHeading,
-            ),
-            const SizedBox(height: 10),
-            Text(
-              'Date: ${dateFormat.format(bomb.createdDate)}',
-              style: AppStyles.subHeading,
             ),
           ],
         ),
