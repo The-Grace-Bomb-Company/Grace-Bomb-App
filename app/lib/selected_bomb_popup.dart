@@ -17,18 +17,24 @@ class SelectedBombPopup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
+    final screenWidth = screenSize.width;
     final bottomMargin = screenSize.height / 4 +
         (DroppedBombMarker.defaultHeight *
             DroppedBombMarker.selectedScaleFactor /
             2);
+    const double margin = 10;
+    const double padding = 10;
+    const bombLogoWidth = 40;
+    final bodyWidth = screenWidth - margin * 2 - padding * 2;
+    final headerWidth = bodyWidth - bombLogoWidth;
 
     return Stack(children: [
       Positioned(
         bottom: bottomMargin,
-        width: MediaQuery.of(context).size.width,
+        width: screenWidth,
         child: Container(
-          margin: const EdgeInsets.all(10),
-          padding: const EdgeInsets.all(10),
+          margin: const EdgeInsets.all(margin),
+          padding: const EdgeInsets.all(padding),
           decoration: BoxDecoration(
               color: AppColors.white,
               borderRadius: BorderRadius.circular(10),
@@ -39,23 +45,35 @@ class SelectedBombPopup extends StatelessWidget {
                 SvgPicture.asset(Assets.wildBombOnMapSvg),
                 Container(
                   margin: const EdgeInsets.only(left: 5),
+                  width: screenWidth - 80,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        bomb.title,
+                        '#${bomb.title}',
+                        maxLines: 1,
                         style: AppStyles.heading,
                       ),
                       Row(
                         children: [
-                          Text(
-                            bomb.locationName,
-                            style: AppStyles.subHeading,
-                          ),
-                          Text(
-                            ' · ${dateFormat.format(bomb.createdDate)}',
-                            style: AppStyles.subHeading,
-                          ),
+                          Column(children: [
+                            SizedBox(
+                                width: headerWidth * 0.6,
+                                child: Text(
+                                  bomb.locationName,
+                                  maxLines: 1,
+                                  style: AppStyles.subHeading,
+                                ))
+                          ]),
+                          Column(children: [
+                            SizedBox(
+                                width: headerWidth * 0.4,
+                                child: Text(
+                                  ' ${dateFormat.format(bomb.createdDate)}',
+                                  maxLines: 1,
+                                  style: AppStyles.subHeading,
+                                ))
+                          ])
                         ],
                       )
                     ],
@@ -63,14 +81,102 @@ class SelectedBombPopup extends StatelessWidget {
                 ),
               ],
             ),
-            Text(
-              bomb.description,
-              maxLines: 4,
-              style: AppStyles.body,
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    bomb.description,
+                    maxLines: 4,
+                    style: AppStyles.body,
+                  ),
+                )
+              ],
+            ),
+            Row(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => BombDetailPage(bomb: bomb),
+                      ),
+                    );
+                  },
+                  child: SizedBox(
+                    width: bodyWidth,
+                    child: Text(
+                      "READ MORE",
+                      style: AppStyles.body.copyWith(
+                        color: Colors.blue,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.right,
+                    ),
+                  ),
+                ),
+              ],
             )
           ]),
         ),
       ),
     ]);
+  }
+}
+
+class BombDetailPage extends StatelessWidget {
+  final DroppedBomb bomb;
+
+  const BombDetailPage({super.key, required this.bomb});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Row(
+          children: [
+            SvgPicture.asset(Assets.wildBombWhiteHorizontalSvg),
+            const SizedBox(width: 8.0),
+            Text(
+              ' #${bomb.title}',
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 24.0,
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: const Color(0xFFE85124),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(16.0),
+          ),
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 10),
+            Text(
+              bomb.locationName,
+              style: AppStyles.subHeading,
+            ),
+            const SizedBox(height: 10),
+            Text(
+              dateFormat.format(bomb.createdDate),
+              style: AppStyles.subHeading,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              bomb.description,
+              style: AppStyles.body,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
