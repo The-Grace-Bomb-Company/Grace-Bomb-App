@@ -135,14 +135,14 @@ class BombDetailPage extends StatelessWidget {
       appBar: AppBar(
         title: Row(
           children: [
-            SvgPicture.asset(Assets.wildBombOnMapSvg, height: 24.0),
+            SvgPicture.asset(Assets.wildBombWhiteHorizontalSvg),
             const SizedBox(width: 8.0),
             Text(
-              '#${bomb.title}',
+              ' #${bomb.title}',
               style: const TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
-                fontSize: 20.0,
+                fontSize: 24.0,
               ),
             ),
           ],
@@ -169,7 +169,7 @@ class BombDetailPage extends StatelessWidget {
               dateFormat.format(bomb.createdDate),
               style: AppStyles.subHeading,
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 12),
             Text(
               bomb.description,
               style: AppStyles.body,
