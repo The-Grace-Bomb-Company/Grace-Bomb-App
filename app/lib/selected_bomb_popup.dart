@@ -133,7 +133,26 @@ class BombDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('#${bomb.title}'),
+        title: Row(
+          children: [
+            SvgPicture.asset(Assets.wildBombOnMapSvg, height: 24.0),
+            const SizedBox(width: 8.0),
+            Text(
+              '#${bomb.title}',
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 20.0,
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: const Color(0xFFE85124),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(16.0),
+          ),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
