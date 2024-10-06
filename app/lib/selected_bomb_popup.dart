@@ -45,7 +45,7 @@ class SelectedBombPopup extends StatelessWidget {
                 SvgPicture.asset(Assets.wildBombOnMapSvg),
                 Container(
                   margin: const EdgeInsets.only(left: 5),
-                  width: screenWidth - 80,
+                  width: headerWidth,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -136,9 +136,9 @@ class BombDetailPage extends StatelessWidget {
         title: Row(
           children: [
             SvgPicture.asset(Assets.wildBombWhiteHorizontalSvg),
-            const SizedBox(width: 8.0),
+            const SizedBox(width: 16.0),
             Text(
-              ' #${bomb.title}',
+              '#${bomb.title}',
               style: const TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
