@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_animations/flutter_map_animations.dart';
@@ -31,37 +30,80 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
   final Map<String, DroppedBomb> droppedBombs = {};
 
   DroppedBomb? selectedBomb;
+  bool showSecondButton = false;
 
   @override
   Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    final buttonPadding = EdgeInsets.only(
+      left: mediaQuery.size.width * 0.2,
+      right: mediaQuery.size.width * 0.2,
+      bottom: mediaQuery.size.height * 0.05,
+    );
+
     return Stack(
       children: [
-        FlutterMap(
-          mapController: animatedMapController.mapController,
-          options: MapOptions(
-            initialCenter: MapView.defaultPosition,
-            initialZoom: 15,
-            interactionOptions: const InteractionOptions(
-              flags: InteractiveFlag.all ^ InteractiveFlag.rotate,
+        GestureDetector(
+          onTap: () {
+            setState(() {
+              showSecondButton = false;
+            });
+          },
+          child: FlutterMap(
+            mapController: animatedMapController.mapController,
+            options: MapOptions(
+              initialCenter: MapView.defaultPosition,
+              initialZoom: 15,
+              interactionOptions: const InteractionOptions(
+                flags: InteractiveFlag.all ^ InteractiveFlag.rotate,
+              ),
+              onMapEvent: handleMapEvent,
+              onMapReady: loadBombsInCameraView,
+              onTap: handleMapTap,
             ),
-            onMapEvent: handleMapEvent,
-            onMapReady: loadBombsInCameraView,
-            onTap: handleMapTap,
+            children: [
+              TileLayer(
+                urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                userAgentPackageName: 'dev.fleaflet.flutter_map.example',
+              ),
+              MarkerLayer(
+                markers: DroppedBombMarker.createMarkers(
+                    droppedBombs.values, selectedBomb, handleBombTap),
+              ),
+            ],
           ),
-          children: [
-            TileLayer(
-              urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-              userAgentPackageName: 'dev.fleaflet.flutter_map.example',
-            ),
-            MarkerLayer(
-              markers: DroppedBombMarker.createMarkers(
-                  droppedBombs.values, selectedBomb, handleBombTap),
-            ),
-          ],
         ),
         selectedBomb == null
             ? const SizedBox.shrink()
-            : SelectedBombPopup(bomb: selectedBomb!)
+            : SelectedBombPopup(bomb: selectedBomb!),
+        Positioned(
+          bottom: buttonPadding.bottom,
+          left: buttonPadding.left,
+          right: buttonPadding.right,
+          child: Center(
+            child: GestureDetector(
+              onTap: () {
+                setState(() {
+                  showSecondButton = !showSecondButton;
+                });
+              },
+              child: SvgPicture.asset(
+                Assets.bombAddNew,
+              ),
+            ),
+          ),
+        ),
+        if (showSecondButton)
+          Positioned(
+            bottom: mediaQuery.size.height * 0.25,
+            left: mediaQuery.size.width * 0.4,
+            right: mediaQuery.size.width * 0.4,
+            child: Center(
+              child: SvgPicture.asset(
+                Assets.wildBombOnMapSvg,
+              ),
+            ),
+          ),
       ],
     );
   }
@@ -116,7 +158,8 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
       mapController.camera.visibleBounds.east,
       mapController.camera.visibleBounds.south,
       mapController.camera.visibleBounds.west,
-    )).map((bomb) => MapEntry(bomb.id, bomb));
+    ))
+        .map((bomb) => MapEntry(bomb.id, bomb));
     setState(() {
       droppedBombs.addEntries(newBombs);
     });
