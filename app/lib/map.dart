@@ -3,6 +3,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_animations/flutter_map_animations.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:grace_bomb/app_colors.dart';
+import 'package:grace_bomb/app_styles.dart';
 import 'package:grace_bomb/assets.dart';
 import 'package:grace_bomb/dropped_bomb.dart';
 import 'package:grace_bomb/selected_bomb_popup.dart';
@@ -30,7 +31,7 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
   final Map<String, DroppedBomb> droppedBombs = {};
 
   DroppedBomb? selectedBomb;
-  bool showSecondButton = false;
+  bool droppingStarted = false;
 
   @override
   Widget build(BuildContext context) {
@@ -40,13 +41,31 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
       right: mediaQuery.size.width * 0.2,
       bottom: mediaQuery.size.height * 0.05,
     );
+//++++
+    final dropBombMarginBottom = mediaQuery.size.height * 0.25;
+    final dropBombMarginLeft = mediaQuery.size.width * 0.5 -
+        (DroppedBombMarker.defaultWidth *
+            DroppedBombMarker.selectedScaleFactor /
+            2);
+    final dropBombPopupMarginBottom = dropBombMarginBottom +
+        (DroppedBombMarker.defaultHeight *
+            DroppedBombMarker.selectedScaleFactor /
+            2);
+    final screenSize = MediaQuery.of(context).size;
+    final screenWidth = screenSize.width;
+    const double dropBombPopupMargin = 10;
+    const double dropBombPopupPadding = 10;
+    const bombLogoWidth = 40;
+    final dropBombPopupbodyWidth =
+        screenWidth - dropBombPopupMargin * 2 - dropBombPopupPadding * 2;
+    final dropBombPopupheaderWidth = dropBombPopupbodyWidth - bombLogoWidth;
 
     return Stack(
       children: [
         GestureDetector(
           onTap: () {
             setState(() {
-              showSecondButton = false;
+              droppingStarted = false;
             });
           },
           child: FlutterMap(
@@ -76,28 +95,84 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
         selectedBomb == null
             ? const SizedBox.shrink()
             : SelectedBombPopup(bomb: selectedBomb!),
-        Positioned(
-          bottom: buttonPadding.bottom,
-          left: buttonPadding.left,
-          right: buttonPadding.right,
-          child: Center(
-            child: GestureDetector(
-              onTap: () {
-                setState(() {
-                  showSecondButton = !showSecondButton;
-                });
-              },
-              child: SvgPicture.asset(
-                Assets.bombAddNew,
+        if (!droppingStarted)
+          Positioned(
+            bottom: buttonPadding.bottom,
+            left: buttonPadding.left,
+            right: buttonPadding.right,
+            child: Center(
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    droppingStarted = !droppingStarted;
+                  });
+                },
+                child: SvgPicture.asset(
+                  Assets.bombAddNew,
+                ),
               ),
             ),
           ),
-        ),
-        if (showSecondButton)
+        if (droppingStarted)
           Positioned(
-            bottom: mediaQuery.size.height * 0.25,
-            left: mediaQuery.size.width * 0.4,
-            right: mediaQuery.size.width * 0.4,
+            bottom: dropBombPopupMarginBottom,
+            width: screenWidth,
+            child: Container(
+              margin: const EdgeInsets.all(dropBombPopupMargin),
+              padding: const EdgeInsets.all(dropBombPopupPadding),
+              decoration: BoxDecoration(
+                  color: AppColors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [standardShadow]),
+              child: Column(children: [
+                Row(
+                  children: [
+                    SvgPicture.asset(Assets.wildBombOnMapSvg),
+                    Container(
+                      margin: const EdgeInsets.only(left: 5),
+                      width: dropBombPopupheaderWidth,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'New Grace Bomb',
+                            maxLines: 1,
+                            style: AppStyles.heading,
+                          ),
+                          Row(
+                            children: [
+                              Column(children: [
+                                SizedBox(
+                                    width: dropBombPopupheaderWidth * 0.6,
+                                    child: Text(
+                                      "p.holder 111111",
+                                      maxLines: 1,
+                                      style: AppStyles.subHeading,
+                                    ))
+                              ]),
+                              Column(children: [
+                                SizedBox(
+                                    width: dropBombPopupheaderWidth * 0.4,
+                                    child: Text(
+                                      ' placeholder',
+                                      maxLines: 1,
+                                      style: AppStyles.subHeading,
+                                    ))
+                              ])
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ]),
+            ),
+          ),
+        if (droppingStarted)
+          Positioned(
+            bottom: dropBombMarginBottom,
+            left: dropBombMarginLeft,
             child: Center(
               child: SvgPicture.asset(
                 Assets.wildBombOnMapSvg,
