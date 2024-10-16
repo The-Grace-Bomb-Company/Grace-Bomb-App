@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_animations/flutter_map_animations.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:grace_bomb/app_colors.dart';
 import 'package:grace_bomb/app_styles.dart';
 import 'package:grace_bomb/assets.dart';
@@ -12,7 +12,6 @@ import 'package:latlong2/latlong.dart';
 
 class MapView extends StatefulWidget {
   const MapView({super.key});
-
   static const defaultPosition = LatLng(30.41216, -91.18401);
 
   @override
@@ -27,9 +26,7 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
     curve: Curves.easeInOut,
     mapController: mapController,
   );
-
   final Map<String, DroppedBomb> droppedBombs = {};
-
   DroppedBomb? selectedBomb;
   bool droppingStarted = false;
 
@@ -41,7 +38,7 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
       right: mediaQuery.size.width * 0.2,
       bottom: mediaQuery.size.height * 0.05,
     );
-//++++
+
     final dropBombMarginBottom = mediaQuery.size.height * 0.25;
     final dropBombMarginLeft = mediaQuery.size.width * 0.5 -
         (DroppedBombMarker.defaultWidth *
@@ -58,7 +55,6 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
     const bombLogoWidth = 40;
     final dropBombPopupbodyWidth =
         screenWidth - dropBombPopupMargin * 2 - dropBombPopupPadding * 2;
-    final dropBombPopupheaderWidth = dropBombPopupbodyWidth - bombLogoWidth;
 
     return Stack(
       children: [
@@ -124,49 +120,56 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
                   color: AppColors.white,
                   borderRadius: BorderRadius.circular(10),
                   boxShadow: [standardShadow]),
-              child: Column(children: [
-                Row(
-                  children: [
-                    SvgPicture.asset(Assets.wildBombOnMapSvg),
-                    Container(
-                      margin: const EdgeInsets.only(left: 5),
-                      width: dropBombPopupheaderWidth,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'New Grace Bomb',
-                            maxLines: 1,
-                            style: AppStyles.heading,
-                          ),
-                          Row(
-                            children: [
-                              Column(children: [
-                                SizedBox(
-                                    width: dropBombPopupheaderWidth * 0.6,
-                                    child: Text(
-                                      "p.holder 111111",
-                                      maxLines: 1,
-                                      style: AppStyles.subHeading,
-                                    ))
-                              ]),
-                              Column(children: [
-                                SizedBox(
-                                    width: dropBombPopupheaderWidth * 0.4,
-                                    child: Text(
-                                      ' placeholder',
-                                      maxLines: 1,
-                                      style: AppStyles.subHeading,
-                                    ))
-                              ])
-                            ],
-                          )
-                        ],
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      SvgPicture.asset(Assets.wildBombOnMapSvg),
+                      Container(
+                        margin: const EdgeInsets.only(left: 5),
+                        width: dropBombPopupbodyWidth - bombLogoWidth - 10,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'New Grace Bomb',
+                              maxLines: 1,
+                              style: AppStyles.heading,
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  droppingStarted = false;
+                                });
+                              },
+                              child: const Icon(
+                                Icons.close,
+                                color: Colors.black,
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Center(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        // Your drop bomb logic here
+                      },
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: const Color(0xFFE85124),
+                        minimumSize: Size(dropBombPopupbodyWidth * 0.8, 50),
+                      ),
+                      child: Text(
+                        'DROP IT',
+                        style: AppStyles.heading,
                       ),
                     ),
-                  ],
-                ),
-              ]),
+                  ),
+                ],
+              ),
             ),
           ),
         if (droppingStarted)
@@ -198,7 +201,6 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
       setState(() {
         selectedBomb = tappedBomb;
       });
-
       final mediaQuery = MediaQuery.of(context);
       // position two-thirds down the screen. Subtract half screen height to account for map positioning relative to center.
       final yOffset =
