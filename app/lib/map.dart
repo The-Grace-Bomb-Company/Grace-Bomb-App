@@ -157,7 +157,15 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
                   Center(
                     child: ElevatedButton(
                       onPressed: () {
-                        // Your drop bomb logic here
+                        final currentLocation = mapController.???;
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => NewBombPage(
+                              location: currentLocation,
+                            ),
+                          ),
+                        );
                       },
                       style: ElevatedButton.styleFrom(
                         foregroundColor: const Color(0xFFE85124),
