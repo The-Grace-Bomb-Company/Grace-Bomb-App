@@ -43,6 +43,6 @@ app.*.map.json
 /android/app/release
 
 # macOS 
-macos/Runner/App.Delegate.swift 
+macos/Runner/AppDelegate.swift 
 macos/Runner.xcodeproj/ 
 macos/Runner.xcworkspace/
