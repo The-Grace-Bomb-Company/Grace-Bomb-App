@@ -45,4 +45,3 @@ app.*.map.json
 # macOS 
 macos/Runner/AppDelegate.swift 
 macos/Runner.xcodeproj/ 
-macos/Runner.xcworkspace/
