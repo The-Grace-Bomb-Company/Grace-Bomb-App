@@ -100,7 +100,8 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
               child: GestureDetector(
                 onTap: () {
                   setState(() {
-                    droppingStarted = !droppingStarted;
+                    droppingStarted = true;
+                    selectedBomb = null;
                   });
                 },
                 child: SvgPicture.asset(
@@ -188,11 +189,13 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
 
   void handleMapTap(tapPosition, point) {
     setState(() {
+      droppingStarted = false;
       selectedBomb = null;
     });
   }
 
   void handleBombTap(DroppedBomb tappedBomb) {
+    droppingStarted = false;
     if (tappedBomb == selectedBomb) {
       setState(() {
         selectedBomb = null;
