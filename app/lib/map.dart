@@ -157,12 +157,21 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
                   Center(
                     child: ElevatedButton(
                       onPressed: () {
-                        final currentLocation = mapController.???;
+                        final currentBounds =
+                            mapController.camera.visibleBounds;
+                        final currentCenter = mapController.camera.center;
+                        final verticalOffset =
+                            (currentBounds.north - currentBounds.south) * 0.25;
+                        final offsetLocation = LatLng(
+                            currentCenter.latitude - verticalOffset,
+                            currentCenter.longitude);
+
+                        //final currentLocation = mapController.camera.center;
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => NewBombPage(
-                              location: currentLocation,
+                              location: offsetLocation,
                             ),
                           ),
                         );
@@ -313,3 +322,21 @@ final standardShadow = BoxShadow(
     blurRadius: 10,
     spreadRadius: 0,
     offset: const Offset(0, 4));
+
+class NewBombPage extends StatelessWidget {
+  final LatLng location;
+
+  const NewBombPage({super.key, required this.location});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('New Bomb'),
+      ),
+      body: Center(
+        child: Text('Location: ${location.latitude}, ${location.longitude}'),
+      ),
+    );
+  }
+}
