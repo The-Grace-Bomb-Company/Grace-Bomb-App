@@ -182,10 +182,8 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
                             Colors.white, // Set the text color to white
                         minimumSize: Size(dropBombPopupbodyWidth * 0.8, 50),
                       ),
-                      child: Text(
-                        'DROP IT',
-                        style: AppStyles.heading,
-                      ),
+                      child: Text('DROP IT',
+                          maxLines: 1, style: AppStyles.heading),
                     ),
                   ),
                 ],
@@ -334,10 +332,41 @@ class NewBombPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('New Bomb'),
+        title: Text('NEW GRACE BOMB', maxLines: 1, style: AppStyles.heading),
+        backgroundColor: const Color(0xFFE85124),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(16.0),
+          ),
+        ),
       ),
-      body: Center(
-        child: Text('Location: ${location.latitude}, ${location.longitude}'),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              'Location: ${location.latitude}, ${location.longitude}',
+              textAlign: TextAlign.center,
+            ),
+            const TextField(
+              decoration: InputDecoration(
+                labelText: 'Give your bomb a name',
+                hintText: 'Enter a name',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16.0),
+            const TextField(
+              decoration: InputDecoration(
+                labelText: 'What is your story?',
+                hintText: 'Share your story',
+                border: OutlineInputBorder(),
+              ),
+              maxLines: 5, // Multi-line input
+            ),
+          ],
+        ),
       ),
     );
   }
