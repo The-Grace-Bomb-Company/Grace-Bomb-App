@@ -166,7 +166,6 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
                             currentCenter.latitude - verticalOffset,
                             currentCenter.longitude);
 
-                        //final currentLocation = mapController.camera.center;
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -177,7 +176,10 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        foregroundColor: const Color(0xFFE85124),
+                        backgroundColor: const Color(
+                            0xFFE85124), // Set the button background color
+                        foregroundColor:
+                            Colors.white, // Set the text color to white
                         minimumSize: Size(dropBombPopupbodyWidth * 0.8, 50),
                       ),
                       child: Text(
