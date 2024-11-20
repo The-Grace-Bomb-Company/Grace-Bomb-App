@@ -330,6 +330,39 @@ class NewBombPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final TextEditingController nameController = TextEditingController();
+    final TextEditingController descriptionController = TextEditingController();
+
+    void saveBomb() {
+      final String title = nameController.text.trim();
+      final String description = descriptionController.text.trim();
+
+      if (title.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please enter the bomb name.')),
+        );
+        return;
+      }
+
+      // Simulate sending to API
+      final bombData = {
+        'latitude': location.latitude,
+        'longitude': location.longitude,
+        'title': title,
+        'description': description,
+      };
+
+      //print('Sending to API: $bombData');
+      // API CALL -->!!!
+
+      // TODO after success
+      // go to previous page and show bomb added - explosion and animation!
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Bomb data saved!')),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text('NEW GRACE BOMB', maxLines: 1, style: AppStyles.heading),
@@ -349,21 +382,36 @@ class NewBombPage extends StatelessWidget {
               'Location: ${location.latitude}, ${location.longitude}',
               textAlign: TextAlign.center,
             ),
-            const TextField(
-              decoration: InputDecoration(
+            const SizedBox(height: 16.0),
+            TextField(
+              controller: nameController,
+              decoration: const InputDecoration(
                 labelText: 'Give your bomb a name',
                 hintText: 'Enter a name',
                 border: OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 16.0),
-            const TextField(
-              decoration: InputDecoration(
+            TextField(
+              controller: descriptionController,
+              decoration: const InputDecoration(
                 labelText: 'What is your story?',
                 hintText: 'Share your story',
                 border: OutlineInputBorder(),
               ),
               maxLines: 5, // Multi-line input
+            ),
+            const SizedBox(height: 32.0),
+            Center(
+              child: ElevatedButton(
+                onPressed: saveBomb,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFE85124),
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size(double.infinity, 50),
+                ),
+                child: Text('SAVE', maxLines: 1, style: AppStyles.heading),
+              ),
             ),
           ],
         ),
