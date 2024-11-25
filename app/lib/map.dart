@@ -334,12 +334,15 @@ class NewBombPage extends StatelessWidget {
     final TextEditingController descriptionController = TextEditingController();
 
     void saveBomb() {
-      final String title = nameController.text.trim();
+      String title = nameController.text.trim();
+      final words = title.split(' ').where((word) => word.isNotEmpty);
+      title =
+          words.map((word) => word[0].toUpperCase() + word.substring(1)).join();
       final String description = descriptionController.text.trim();
 
-      if (title.isEmpty) {
+      if (title.isNotEmpty && title.length > 30) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please enter the bomb name.')),
+          const SnackBar(content: Text('Please pick a shorter name')),
         );
         return;
       }
@@ -357,9 +360,8 @@ class NewBombPage extends StatelessWidget {
 
       // TODO after success
       // go to previous page and show bomb added - explosion and animation!
-
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Bomb data saved!')),
+        const SnackBar(content: Text("Saved")),
       );
     }
 
@@ -386,8 +388,8 @@ class NewBombPage extends StatelessWidget {
             TextField(
               controller: nameController,
               decoration: const InputDecoration(
-                labelText: 'Give your bomb a name',
-                hintText: 'Enter a name',
+                labelText: 'Give your bomb a #Name (optional)',
+                hintText: 'No spaces and rather short (skip the #)',
                 border: OutlineInputBorder(),
               ),
             ),
@@ -395,8 +397,8 @@ class NewBombPage extends StatelessWidget {
             TextField(
               controller: descriptionController,
               decoration: const InputDecoration(
-                labelText: 'What is your story?',
-                hintText: 'Share your story',
+                labelText: 'Story is optional, but it is fun to hear it!',
+                hintText: 'Share your story here',
                 border: OutlineInputBorder(),
               ),
               maxLines: 5, // Multi-line input
