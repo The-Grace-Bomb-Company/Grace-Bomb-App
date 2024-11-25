@@ -9,6 +9,16 @@ import 'package:intl/intl.dart';
 
 final dateFormat = DateFormat('M/d/yy');
 
+String getFormattedBombTitle(String title) {
+  if (title.trim().isEmpty || title == 'no title') {
+    return "GraceBomb";
+  }
+
+  // Remove spaces and capitalize first letter of each word
+  final words = title.split(' ').where((word) => word.isNotEmpty);
+  return words.map((word) => word[0].toUpperCase() + word.substring(1)).join();
+}
+
 class SelectedBombPopup extends StatelessWidget {
   final DroppedBomb bomb;
 
@@ -27,6 +37,7 @@ class SelectedBombPopup extends StatelessWidget {
     const bombLogoWidth = 40;
     final bodyWidth = screenWidth - margin * 2 - padding * 2;
     final headerWidth = bodyWidth - bombLogoWidth;
+    final bombTitle = getFormattedBombTitle(bomb.title);
 
     return Stack(children: [
       Positioned(
@@ -50,7 +61,7 @@ class SelectedBombPopup extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '#${bomb.title}',
+                        '#$bombTitle',
                         maxLines: 1,
                         style: AppStyles.heading,
                       ),
@@ -131,6 +142,8 @@ class BombDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bombTitle = getFormattedBombTitle(bomb.title);
+
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -138,7 +151,7 @@ class BombDetailPage extends StatelessWidget {
             SvgPicture.asset(Assets.wildBombWhiteHorizontalSvg),
             const SizedBox(width: 16.0),
             Text(
-              '#${bomb.title}',
+              '#$bombTitle',
               style: const TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
