@@ -380,10 +380,10 @@ class NewBombPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
-              'Location: ${location.latitude}, ${location.longitude}',
-              textAlign: TextAlign.center,
-            ),
+            // Text(
+            //   'Location: ${location.latitude}, ${location.longitude}',
+            //   textAlign: TextAlign.center,
+            // ),
             const SizedBox(height: 16.0),
             TextField(
               controller: nameController,
