@@ -1,8 +1,8 @@
-import 'package:grace_bomb/app_methods.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:grace_bomb/app_colors.dart';
 import 'package:grace_bomb/app_styles.dart';
+import 'package:grace_bomb/app_methods.dart';
 import 'package:grace_bomb/assets.dart';
 import 'package:grace_bomb/dropped_bomb.dart';
 import 'package:grace_bomb/map.dart';
