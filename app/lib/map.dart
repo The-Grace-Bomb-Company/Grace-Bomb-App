@@ -3,6 +3,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_animations/flutter_map_animations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:grace_bomb/app_colors.dart';
+import 'package:grace_bomb/app_methods.dart';
 import 'package:grace_bomb/app_styles.dart';
 import 'package:grace_bomb/assets.dart';
 import 'package:grace_bomb/dropped_bomb.dart';
@@ -334,10 +335,10 @@ class NewBombPage extends StatelessWidget {
     final TextEditingController descriptionController = TextEditingController();
 
     void saveBomb() {
-      String title = nameController.text.trim();
-      final words = title.split(' ').where((word) => word.isNotEmpty);
-      title =
-          words.map((word) => word[0].toUpperCase() + word.substring(1)).join();
+      final String title = nameController.text.trim().isEmpty
+          ? ''
+          : AppMethods.createHashtag(nameController.text);
+
       final String description = descriptionController.text.trim();
 
       if (title.isNotEmpty && title.length > 30) {
@@ -355,7 +356,11 @@ class NewBombPage extends StatelessWidget {
         'description': description,
       };
 
-      //print('Sending to API: $bombData');
+      // TEST DEBUG
+      print('latitude: ${location.latitude}');
+      print('longitude: ${location.longitude}');
+      print('title: --$title--');
+      print('desc: --$description--');
       // API CALL -->!!!
 
       // TODO after success
