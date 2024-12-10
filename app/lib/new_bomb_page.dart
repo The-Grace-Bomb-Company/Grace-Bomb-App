@@ -3,65 +3,81 @@ import 'package:grace_bomb/app_styles.dart';
 import 'package:grace_bomb/app_methods.dart';
 import 'package:grace_bomb/app_settings.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:grace_bomb/apis/save_new_bomb.dart';
 
-class NewBombPage extends StatelessWidget {
+class NewBombPage extends StatefulWidget {
   final LatLng location;
 
   const NewBombPage({super.key, required this.location});
 
   @override
-  Widget build(BuildContext context) {
-    final TextEditingController nameController = TextEditingController();
-    final TextEditingController descriptionController = TextEditingController();
+  State<NewBombPage> createState() => _NewBombPageState();
+}
 
-    void saveBomb() {
-      final String title = nameController.text.trim().isEmpty
-          ? ''
-          : AppMethods.createHashtag(nameController.text);
+class _NewBombPageState extends State<NewBombPage> {
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
 
-      final String description = descriptionController.text.trim();
+  @override
+  void dispose() {
+    nameController.dispose();
+    descriptionController.dispose();
+    super.dispose();
+  }
 
-      if (title.isNotEmpty && title.length > AppSettings.maxBombTitleLength) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text(
-                  'Please pick a name shorter than ${AppSettings.maxBombTitleLength} symbols.')),
-        );
-        return;
-      }
+  void saveBomb() async {
+    final String title = nameController.text.trim().isEmpty
+        ? ''
+        : AppMethods.createHashtag(nameController.text);
 
-      if (description.isNotEmpty &&
-          title.length > AppSettings.maxBombStoryLength) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text(
-                  'Please write a strory shorter than ${AppSettings.maxBombStoryLength} symbols.')),
-        );
-        return;
-      }
-
-      // Simulate sending to API
-      final bombData = {
-        'latitude': location.latitude,
-        'longitude': location.longitude,
-        'title': title,
-        'description': description,
-      };
-
-      // TEST DEBUG
-      print('latitude: ${location.latitude}');
-      print('longitude: ${location.longitude}');
-      print('title: --$title--');
-      print('desc: --$description--');
-      // API CALL -->!!!
-
-      // TODO after success
-      // go to previous page and show bomb added - explosion and animation!
+    final String description = descriptionController.text.trim();
+    if (title.isNotEmpty && title.length > AppSettings.maxBombTitleLength) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Saved")),
+        const SnackBar(
+            content: Text(
+                'Please pick a name shorter than ${AppSettings.maxBombTitleLength} characters.')),
       );
+      return;
     }
 
+    if (description.isNotEmpty &&
+        description.length > AppSettings.maxBombStoryLength) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text(
+                'Please write a story shorter than ${AppSettings.maxBombStoryLength} characters.')),
+      );
+      return;
+    }
+
+    // Simulate sending to API
+    final request = SaveNewBombRequest(
+      latitude: widget.location.latitude,
+      longitude: widget.location.longitude,
+      title: title,
+      description: description,
+    );
+
+    try {
+      await saveNewBomb(request);
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Bomb saved successfully!")),
+        );
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Error saving bomb: ${e.toString()}")),
+        );
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('NEW GRACE BOMB', maxLines: 1, style: AppStyles.heading),
@@ -78,7 +94,7 @@ class NewBombPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Text(
-            //   'Location: ${location.latitude}, ${location.longitude}',
+            //   'Location: ${widget.location.latitude}, ${widget.location.longitude}',
             //   textAlign: TextAlign.center,
             // ),
             const SizedBox(height: 16.0),
