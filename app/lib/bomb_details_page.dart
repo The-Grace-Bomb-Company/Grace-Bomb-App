@@ -1,3 +1,13 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:grace_bomb/app_styles.dart';
+import 'package:grace_bomb/app_methods.dart';
+import 'package:grace_bomb/assets.dart';
+import 'package:grace_bomb/dropped_bomb.dart';
+import 'package:intl/intl.dart';
+
+final dateFormat = DateFormat('M/d/yy');
+
 class BombDetailsPage extends StatelessWidget {
   final DroppedBomb bomb;
 
@@ -5,7 +15,7 @@ class BombDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bombTitle = formatBombTitle(bomb.title);
+    final bombTitle = AppMethods.formatBombTitle(bomb.title);
 
     return Scaffold(
       appBar: AppBar(

@@ -6,4 +6,11 @@ class AppMethods {
     if (hashtag[0] != '#') hashtag = '#$hashtag';
     return hashtag;
   }
+
+  static String formatBombTitle(String title) {
+  if (title.trim().isEmpty) {
+    return "#GraceBomb";
+  }
+  return createHashtag(title);
+}
 }

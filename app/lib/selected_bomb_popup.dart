@@ -5,17 +5,10 @@ import 'package:grace_bomb/app_styles.dart';
 import 'package:grace_bomb/app_methods.dart';
 import 'package:grace_bomb/assets.dart';
 import 'package:grace_bomb/dropped_bomb.dart';
+import 'package:grace_bomb/bomb_details_page.dart';
 import 'package:grace_bomb/map.dart';
-import 'package:intl/intl.dart';
 
-final dateFormat = DateFormat('M/d/yy');
 
-String formatBombTitle(String title) {
-  if (title.trim().isEmpty) {
-    return "#GraceBomb";
-  }
-  return AppMethods.createHashtag(title);
-}
 
 class SelectedBombPopup extends StatelessWidget {
   final DroppedBomb bomb;
@@ -35,7 +28,7 @@ class SelectedBombPopup extends StatelessWidget {
     const bombLogoWidth = 40;
     final bodyWidth = screenWidth - margin * 2 - padding * 2;
     final headerWidth = bodyWidth - bombLogoWidth;
-    final bombTitle = formatBombTitle(bomb.title);
+    final bombTitle = AppMethods.formatBombTitle(bomb.title);
 
     return Stack(children: [
       Positioned(
