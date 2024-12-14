@@ -11,7 +11,7 @@ import 'package:intl/intl.dart';
 final dateFormat = DateFormat('M/d/yy');
 
 String formatBombTitle(String title) {
-  if (title.trim().isEmpty || title == 'no title') {
+  if (title.trim().isEmpty) {
     return "#GraceBomb";
   }
   return AppMethods.createHashtag(title);

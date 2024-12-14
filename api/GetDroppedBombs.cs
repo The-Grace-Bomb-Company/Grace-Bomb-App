@@ -46,7 +46,7 @@ namespace azure_functions
                         Longitude = double.Parse(row[3].ToString()!),
                         Description = row[4].ToString()!,
                         Id = Guid.Parse(row[5].ToString()!),
-                        Title = "no title",
+                        Title = string.Empty // temp--> TODO get the title from column with index [6] in future  // "#GraceBomb", // temp
                     });
                 }
                 catch (Exception e)
