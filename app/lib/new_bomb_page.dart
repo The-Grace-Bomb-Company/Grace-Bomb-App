@@ -61,18 +61,18 @@ class _NewBombPageState extends State<NewBombPage> {
     try {
       await saveNewBomb(request);
 
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Bomb saved successfully!")),
-        );
-        Navigator.pop(context);
-      }
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Bomb saved successfully!")),
+      );
+      Navigator.pop(context);
     } catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Error saving bomb: ${e.toString()}")),
-        );
-      }
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error saving bomb: ${e.toString()}")),
+      );
     }
   }
 
