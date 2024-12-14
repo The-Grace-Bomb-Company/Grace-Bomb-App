@@ -11,6 +11,12 @@ import 'package:grace_bomb/selected_bomb_popup.dart';
 import 'package:grace_bomb/apis/get_dropped_bombs.dart';
 import 'package:latlong2/latlong.dart';
 
+final standardShadow = BoxShadow(
+    color: AppColors.black.withAlpha(64),
+    blurRadius: 10,
+    spreadRadius: 0,
+    offset: const Offset(0, 4));
+
 class MapView extends StatefulWidget {
   const MapView({super.key});
   static const defaultPosition = LatLng(30.41216, -91.18401);
@@ -317,9 +323,3 @@ class DroppedBombMarker extends StatelessWidget {
     ).toList();
   }
 }
-
-final standardShadow = BoxShadow(
-    color: AppColors.black.withOpacity(0.25),
-    blurRadius: 10,
-    spreadRadius: 0,
-    offset: const Offset(0, 4));
