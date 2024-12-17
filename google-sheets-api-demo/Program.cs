@@ -26,7 +26,7 @@ var service = new SheetsService(new BaseClientService.Initializer()
 var spreadsheetId = "1jd2INJ-rcZZRI5LcqtBPwU3Pt8J_m6fwRq0jBo7LNJ4"; // ark test
 
 
-var range = "Grace Bomb App Data!A1:F";
+var range = "Grace Bomb App Data!A1:H";
 SpreadsheetsResource.ValuesResource.GetRequest request =
     service.Spreadsheets.Values.Get(spreadsheetId, range);
 
