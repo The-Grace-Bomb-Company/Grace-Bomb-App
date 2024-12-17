@@ -13,3 +13,5 @@ todo.txt
 .idea/vcs.xml
 .idea/caches/deviceStreaming.xml
 .vs/
+__blobstorage__/
+__azurite_*
