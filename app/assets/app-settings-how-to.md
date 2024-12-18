@@ -6,19 +6,19 @@ Depending on your environment, you can choose between production values or debug
 
 For production values:
 
-1. Open the `app-settings-production.json` file.
+1. Open the `app-settings-production-template.json` file.
 2. Copy the content.
 3. Paste it into your `app-settings.json` file.
 
 For debugging values:
 
-1. Open the `app-settings-debug.json` file.
+1. Open the `app-settings-debug-template.json` file.
 2. Copy the content.
 3. Paste it into your `app-settings.json` file.
 
 For specific Android debugging values:
 
-1. Open the `app-settings-android-debug.json` file.
+1. Open the `app-settings-debug-android-template.json` file.
 2. Copy the content.
 3. Paste it into your `app-settings.json` file.
 
