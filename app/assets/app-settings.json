@@ -1,5 +1,5 @@
 {
   "isDebug": true,
-  "apiAuthority": "localhost:7071",
+  "apiAuthority": "10.0.2.2:7071",
   "apiCode": ""
 }
