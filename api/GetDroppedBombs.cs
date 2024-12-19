@@ -21,7 +21,7 @@ namespace azure_functions
         [Function("GetDroppedBombs")]
         public async Task<HttpResponseData> RunAsync([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequestData request)
         {
-            var applicationName = "Grace Bomb App Test";
+            var applicationName = Configuration.ApplicationName;
 
             var credential = GoogleCredential.FromJson(Configuration.GoogleCredential);
 

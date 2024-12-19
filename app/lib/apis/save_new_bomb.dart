@@ -18,20 +18,37 @@ class SaveNewBombRequest {
   });
 
   Map<String, dynamic> toJson() => {
-        'latitude': latitude,
-        'longitude': longitude,
-        'title': title,
-        'description': description,
-        'locationName': locationName,
+        'Latitude': latitude,
+        'Longitude': longitude,
+        'Title': title,
+        'Description': description,
+        'LocationName': locationName,
+        'IsAprroved': false,
       };
 }
 
 Future<void> saveNewBomb(SaveNewBombRequest request) async {
-  final url = Uri.parse('${AppSettings.apiAuthority}/api/SaveNewBomb');
+  Uri uri;
+  String endpoint = 'api/SaveNewBomb';
+  if (AppSettings.isDebug) {
+    uri = Uri.http(
+      AppSettings.apiAuthority,
+      endpoint,
+      {},
+    );
+  } else {
+    uri = Uri.https(
+      AppSettings.apiAuthority,
+      endpoint,
+      {
+        'code': AppSettings.apiCode,
+      },
+    );
+  }
 
   try {
     final response = await http.post(
-      url,
+      uri,
       headers: {
         'Content-Type': 'application/json',
         'x-functions-key': AppSettings.apiCode,

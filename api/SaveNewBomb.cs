@@ -27,13 +27,17 @@ namespace azure_functions
 
             // Parse the request body
             var requestBody = await request.ReadAsStringAsync();
-            BombData? bombData;
+            BombData bombData;
             try
             {
-                bombData = JsonConvert.DeserializeObject<BombData>(requestBody);
-                if (bombData == null || string.IsNullOrEmpty(bombData.Title) || string.IsNullOrEmpty(bombData.Description))
+                if (requestBody is not null)
                 {
-                    throw new Exception("Invalid payload: Title and Description are required.");
+                    bombData = JsonConvert.DeserializeObject<BombData>(requestBody) ?? 
+                    throw new Exception("Invalid payload: Deserialization resulted in null.");
+                }
+                else
+                { 
+                    throw new Exception("Invalid payload: Request body is empty.");
                 }
             }
             catch (Exception ex)
@@ -45,7 +49,7 @@ namespace azure_functions
             }
 
             // Authenticate with Google Sheets API
-            var applicationName = "Grace Bomb App Test";
+            var applicationName = Configuration.ApplicationName;
             var credential = GoogleCredential.FromJson(Configuration.GoogleCredential);
 
             var service = new SheetsService(new BaseClientService.Initializer()
@@ -57,19 +61,21 @@ namespace azure_functions
             // Prepare data to append
             var newRow = new List<object>
             {
-                DateTime.UtcNow.ToString("o"),    // Created Date in ISO 8601 format
-                bombData.Title,                  // Bomb Title
-                bombData.Description,            // Bomb Description
+                DateTime.UtcNow.ToString("o"),      // Created Date in ISO 8601 format
+                bombData.LocationName,              // Location Name
                 bombData.Latitude.ToString(CultureInfo.InvariantCulture), // Latitude
                 bombData.Longitude.ToString(CultureInfo.InvariantCulture), // Longitude
-                Guid.NewGuid().ToString(),       // Unique ID
+                bombData.Description,               // Bomb Description
+                Guid.NewGuid(),                     // Unique ID
+                bombData.Title,                     // Bomb Title
+                bombData.IsApproved ? 1 : 0         // Is Approved                
             };
 
             // Append the new row to the Google Sheet
             try
             {
                 var appendRequest = service.Spreadsheets.Values.Append(
-                    new ValueRange { Values = new List<IList<object>> { newRow } },
+                    new ValueRange { Values = [newRow] },
                     Configuration.GoogleSpreadsheetId,
                     Configuration.GoogleSpreadsheetRange
                 );
@@ -98,5 +104,7 @@ namespace azure_functions
         public string Description { get; set; } = string.Empty;
         public double Latitude { get; set; }
         public double Longitude { get; set; }
+        public string LocationName { get; set; } = string.Empty;
+        public bool IsApproved { get; set; }
     }
 }

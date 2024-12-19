@@ -50,12 +50,13 @@ class _NewBombPageState extends State<NewBombPage> {
       return;
     }
 
-    // Simulate sending to API
+    // Sending New Bomb Saving request to the API
     final request = SaveNewBombRequest(
       latitude: widget.location.latitude,
       longitude: widget.location.longitude,
       title: title,
       description: description,
+      locationName: '', // Temporarily empty
     );
 
     try {
