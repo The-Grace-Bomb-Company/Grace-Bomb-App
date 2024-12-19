@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:grace_bomb/app_settings.dart';
 import 'package:grace_bomb/app_colors.dart';
 import 'package:grace_bomb/app_styles.dart';
 import 'package:grace_bomb/app_methods.dart';
@@ -7,8 +8,6 @@ import 'package:grace_bomb/assets.dart';
 import 'package:grace_bomb/dropped_bomb.dart';
 import 'package:grace_bomb/bomb_details_page.dart';
 import 'package:grace_bomb/map.dart';
-
-
 
 class SelectedBombPopup extends StatelessWidget {
   final DroppedBomb bomb;
@@ -28,7 +27,13 @@ class SelectedBombPopup extends StatelessWidget {
     const bombLogoWidth = 40;
     final bodyWidth = screenWidth - margin * 2 - padding * 2;
     final headerWidth = bodyWidth - bombLogoWidth;
-    final bombTitle = AppMethods.formatBombTitle(bomb.title);
+    String bombTitleTemp = '';
+    String bombDescription = AppSettings.pendingApprovalDescription;
+    if (bomb.isApproved) {
+      bombTitleTemp = bomb.title;
+      bombDescription = bomb.description;
+    }
+    final bombTitle = AppMethods.formatBombTitle(bombTitleTemp);
 
     return Stack(children: [
       Positioned(
@@ -87,7 +92,7 @@ class SelectedBombPopup extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    bomb.description,
+                    bombDescription,
                     maxLines: 4,
                     style: AppStyles.body,
                   ),
@@ -125,4 +130,3 @@ class SelectedBombPopup extends StatelessWidget {
     ]);
   }
 }
-

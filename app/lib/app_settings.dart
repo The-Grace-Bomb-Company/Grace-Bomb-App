@@ -8,4 +8,6 @@ class AppSettings {
 
   static const int maxBombTitleLength = 30;
   static const int maxBombStoryLength = 2200;
+  static const String pendingApprovalDescription =
+      'Description is Pending Approval';
 }

@@ -62,6 +62,7 @@ Future<List<DroppedBomb>> getDroppedBombs(
             json['Longitude'],
             json['LocationName'],
             dateFormat.parse(json['CreatedDate']),
+            json['IsApproved'],
           ))
       .toList();
 

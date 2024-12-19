@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:grace_bomb/app_settings.dart';
 import 'package:grace_bomb/app_styles.dart';
 import 'package:grace_bomb/app_methods.dart';
 import 'package:grace_bomb/assets.dart';
@@ -15,7 +16,13 @@ class BombDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bombTitle = AppMethods.formatBombTitle(bomb.title);
+    String bombTitleTemp = '';
+    String bombDescription = AppSettings.pendingApprovalDescription;
+    if (bomb.isApproved) {
+      bombTitleTemp = bomb.title;
+      bombDescription = bomb.description;
+    }
+    final bombTitle = AppMethods.formatBombTitle(bombTitleTemp);
 
     return Scaffold(
       appBar: AppBar(
@@ -57,7 +64,7 @@ class BombDetailsPage extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             Text(
-              bomb.description,
+              bombDescription,
               style: AppStyles.body,
             ),
           ],

@@ -6,9 +6,10 @@ class DroppedBomb {
   final double longitude;
   final String locationName;
   final DateTime createdDate;
+  final bool isApproved;
 
   DroppedBomb(this.id, this.title, this.description, this.latitude,
-      this.longitude, this.locationName, this.createdDate);
+      this.longitude, this.locationName, this.createdDate, this.isApproved);
 
   @override
   int get hashCode => id.hashCode;
