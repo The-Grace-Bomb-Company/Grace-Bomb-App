@@ -67,7 +67,11 @@ class _NewBombPageState extends State<NewBombPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Bomb saved successfully!")),
       );
-      Navigator.pop(context);
+      Navigator.pop(context, {
+        'title': title,
+        'description': description,
+        'success': true,
+      });
     } catch (e) {
       if (!mounted) return;
 

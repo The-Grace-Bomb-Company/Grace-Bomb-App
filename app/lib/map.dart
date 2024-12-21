@@ -163,7 +163,7 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
                   const SizedBox(height: 10),
                   Center(
                     child: ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         final currentBounds =
                             mapController.camera.visibleBounds;
                         final currentCenter = mapController.camera.center;
@@ -173,7 +173,7 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
                             currentCenter.latitude - verticalOffset,
                             currentCenter.longitude);
 
-                        Navigator.push(
+                        final result = await Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => NewBombPage(
@@ -181,6 +181,16 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
                             ),
                           ),
                         );
+
+                        if (result != null && result['success']) {
+                          // Use the returned data
+                          String title = result['title'];
+                          String description = result['description'];
+
+                          // Do something with the data
+                          print('Title: $title');
+                          print('Description: $description');
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(
