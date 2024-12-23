@@ -186,10 +186,12 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
                           // Use the returned data
                           String title = result['title'];
                           String description = result['description'];
-
-                          // Do something with the data
-                          print('Title: $title');
-                          print('Description: $description');
+                          setState(() {
+                            droppingStarted = false;
+                          });
+                          // Do something with the data (SHOW EXPLOTION POPUP - TODO)
+                          // print('Title: $title');
+                          // print('Description: $description');
                         }
                       },
                       style: ElevatedButton.styleFrom(
