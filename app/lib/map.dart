@@ -8,6 +8,7 @@ import 'package:grace_bomb/new_bomb_page.dart';
 import 'package:grace_bomb/assets.dart';
 import 'package:grace_bomb/dropped_bomb.dart';
 import 'package:grace_bomb/selected_bomb_popup.dart';
+import 'package:grace_bomb/added_bomb_popup.dart';
 import 'package:grace_bomb/apis/get_dropped_bombs.dart';
 import 'package:latlong2/latlong.dart';
 
@@ -36,6 +37,9 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
   final Map<String, DroppedBomb> droppedBombs = {};
   DroppedBomb? selectedBomb;
   bool droppingStarted = false;
+  bool droppingEnded = false;
+  String addedBombtitle = '';
+  String addedBombdescription = '';
 
   @override
   Widget build(BuildContext context) {
@@ -69,6 +73,7 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
           onTap: () {
             setState(() {
               droppingStarted = false;
+              droppingEnded = false;
             });
           },
           child: FlutterMap(
@@ -98,7 +103,7 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
         selectedBomb == null
             ? const SizedBox.shrink()
             : SelectedBombPopup(bomb: selectedBomb!),
-        if (!droppingStarted)
+        if (!droppingStarted && !droppingEnded)
           Positioned(
             bottom: buttonPadding.bottom,
             left: buttonPadding.left,
@@ -117,7 +122,7 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
               ),
             ),
           ),
-        if (droppingStarted)
+        if (droppingStarted && !droppingEnded)
           Positioned(
             bottom: dropBombPopupMarginBottom,
             width: screenWidth,
@@ -173,6 +178,9 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
                             currentCenter.latitude - verticalOffset,
                             currentCenter.longitude);
 
+                        addedBombtitle = '';
+                        addedBombdescription = '';
+
                         final result = await Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -183,15 +191,12 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
                         );
 
                         if (result != null && result['success']) {
-                          // Use the returned data
-                          String title = result['title'];
-                          String description = result['description'];
                           setState(() {
+                            addedBombtitle = result['title'];
+                            addedBombdescription = result['description'];
                             droppingStarted = false;
+                            droppingEnded = true;
                           });
-                          // Do something with the data (SHOW EXPLOTION POPUP - TODO)
-                          // print('Title: $title');
-                          // print('Description: $description');
                         }
                       },
                       style: ElevatedButton.styleFrom(
@@ -209,7 +214,7 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
               ),
             ),
           ),
-        if (droppingStarted)
+        if (droppingStarted && !droppingEnded)
           Positioned(
             bottom: dropBombMarginBottom,
             left: dropBombMarginLeft,
@@ -219,6 +224,9 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
               ),
             ),
           ),
+        if (droppingEnded && !droppingStarted)
+          AddedBombPopup(
+              title: addedBombtitle, description: addedBombdescription),
       ],
     );
   }
@@ -226,12 +234,14 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
   void handleMapTap(tapPosition, point) {
     setState(() {
       droppingStarted = false;
+      droppingEnded = false;
       selectedBomb = null;
     });
   }
 
   void handleBombTap(DroppedBomb tappedBomb) {
     droppingStarted = false;
+    droppingEnded = false;
     if (tappedBomb == selectedBomb) {
       setState(() {
         selectedBomb = null;
