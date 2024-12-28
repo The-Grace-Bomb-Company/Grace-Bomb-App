@@ -21,7 +21,7 @@ namespace azure_functions
         [Function("GetDroppedBombs")]
         public async Task<HttpResponseData> RunAsync([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequestData request)
         {
-            var applicationName = "Grace Bomb App Test";
+            var applicationName = Configuration.ApplicationName;
 
             var credential = GoogleCredential.FromJson(Configuration.GoogleCredential);
 
@@ -46,7 +46,8 @@ namespace azure_functions
                         Longitude = double.Parse(row[3].ToString()!),
                         Description = row[4].ToString()!,
                         Id = Guid.Parse(row[5].ToString()!),
-                        Title = "no title",
+                        Title = row[6].ToString()!,
+                        IsApproved = row[7].ToString()! == "1"
                     });
                 }
                 catch (Exception e)
@@ -74,5 +75,6 @@ namespace azure_functions
         public double Longitude { get; set; }
         public string LocationName { get; set; } = string.Empty;
         public DateTime CreatedDate { get; set; }
+        public bool IsApproved { get; set; }
     }
 }

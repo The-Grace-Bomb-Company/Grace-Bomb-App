@@ -3,7 +3,8 @@
     "azure_functions": {
       "commandName": "Project",
       "commandLineArgs": "--port 7026",
-      "launchBrowser": false
+      "launchBrowser": false,
+      "applicationUrl": "http://localhost:7026"
     }
   }
 }
