@@ -196,6 +196,8 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
                             addedBombdescription = result['description'];
                             droppingStarted = false;
                             droppingEnded = true;
+
+                            loadBombsInCameraView();
                           });
                         }
                       },
