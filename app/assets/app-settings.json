@@ -1,5 +1,5 @@
 {
-  "isDebug": true,
-  "apiAuthority": "10.0.2.2:7071",
-  "apiCode": ""
+  "isDebug": false,
+  "apiAuthority": "gracebomb-function.azurewebsites.net",
+  "apiCode": "VY8JmQDhhY6QnayNfddh7kB0hVkCR73fCv9_R02C1y3mAzFuMxA_4g=="
 }
