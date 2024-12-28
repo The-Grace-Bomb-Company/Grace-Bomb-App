@@ -28,7 +28,8 @@ class AddedBombPopup extends StatelessWidget {
           child: Stack(
             children: [
               Container(
-                margin: const EdgeInsets.only(top: 10), // Move shadow 10px down
+                margin: const EdgeInsets.only(
+                    top: 8, left: 16), // Move shadow 10px down
                 child:
                     SvgPicture.asset(Assets.bombExplosionShadow), // Shadow SVG
               ),
@@ -49,9 +50,9 @@ class AddedBombPopup extends StatelessWidget {
                           Center(
                             child: Container(
                               margin: const EdgeInsets.only(left: 20),
-                              width: 180, // Limit title width
+                              width: 160, // Limit title width
                               child: Text(
-                                title,
+                                title.isEmpty ? '#NewGraceBomb!' : title,
                                 style: title.length > 15
                                     ? AppStyles.heading.copyWith(fontSize: 16)
                                     : AppStyles.heading,
@@ -62,7 +63,9 @@ class AddedBombPopup extends StatelessWidget {
                             margin: const EdgeInsets.only(left: 20),
                             width: 160, // Limit text width
                             child: Text(
-                              description,
+                              description.isEmpty
+                                  ? 'No story provided...'
+                                  : description,
                               maxLines: 3,
                               style: AppStyles.body,
                             ),
