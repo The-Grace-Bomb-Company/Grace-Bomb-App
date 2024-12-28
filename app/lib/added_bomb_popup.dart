@@ -27,7 +27,11 @@ class AddedBombPopup extends StatelessWidget {
           width: 220,
           child: Stack(
             children: [
-              SvgPicture.asset(Assets.bombExplosionShadow), // Shadow SVG
+              Container(
+                margin: const EdgeInsets.only(top: 10), // Move shadow 10px down
+                child:
+                    SvgPicture.asset(Assets.bombExplosionShadow), // Shadow SVG
+              ),
               Container(
                 margin: const EdgeInsets.all(0),
                 padding: const EdgeInsets.all(0),
@@ -42,29 +46,21 @@ class AddedBombPopup extends StatelessWidget {
                       padding: const EdgeInsets.only(top: 70), // Move text down
                       child: Column(
                         children: [
-                          Row(
-                            children: [
-                              Container(
-                                margin: const EdgeInsets.only(left: 15),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      margin: const EdgeInsets.only(left: 25),
-                                      width: 180, // Limit title width
-                                      child: Text(
-                                        title,
-                                        style: AppStyles.heading,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                          Center(
+                            child: Container(
+                              margin: const EdgeInsets.only(left: 20),
+                              width: 180, // Limit title width
+                              child: Text(
+                                title,
+                                style: title.length > 15
+                                    ? AppStyles.heading.copyWith(fontSize: 16)
+                                    : AppStyles.heading,
                               ),
-                            ],
+                            ),
                           ),
                           Container(
-                            margin: const EdgeInsets.only(left: 15),
-                            width: 180, // Limit text width
+                            margin: const EdgeInsets.only(left: 20),
+                            width: 160, // Limit text width
                             child: Text(
                               description,
                               maxLines: 3,
