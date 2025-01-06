@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_animations/flutter_map_animations.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:grace_bomb/app_colors.dart';
@@ -38,7 +39,6 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
 
   Future<void> _determinePosition() async {
     bool serviceEnabled;
-    LocationPermission permission;
 
     // Test if location services are enabled.
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -50,20 +50,18 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
       return;
     }
 
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        // Permissions are denied, use default position.
-        setState(() {
-          _initialPosition = MapView.defaultPosition;
-        });
-        return;
-      }
+    // Request location permissions
+    var status = await Permission.location.request();
+    if (status.isDenied) {
+      // Permissions are denied, use default position.
+      setState(() {
+        _initialPosition = MapView.defaultPosition;
+      });
+      return;
     }
 
-    if (permission == LocationPermission.deniedForever) {
-      // Permissions are denied forever, use default position.
+    if (status.isPermanentlyDenied) {
+      // Permissions are permanently denied, use default position.
       setState(() {
         _initialPosition = MapView.defaultPosition;
       });
