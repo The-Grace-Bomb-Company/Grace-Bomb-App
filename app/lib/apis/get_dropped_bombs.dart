@@ -44,6 +44,10 @@ Future<List<DroppedBomb>> getDroppedBombs(
     return [];
   }
 
+  final random = Random();
+  final latOffset = (random.nextDouble() * 0.00018) - 0.00009;
+  final lonOffset = (random.nextDouble() * 0.00018) - 0.00009;
+
   final List<dynamic> parsedJson = jsonDecode(response.body);
   final bombs = parsedJson
       .where((json) {
@@ -58,8 +62,8 @@ Future<List<DroppedBomb>> getDroppedBombs(
             json['Id'],
             json['Title'],
             json['Description'],
-            json['Latitude'],
-            json['Longitude'],
+            json['Latitude'] + latOffset,
+            json['Longitude'] - lonOffset,
             json['LocationName'],
             dateFormat.parse(json['CreatedDate']),
             json['IsApproved'],
