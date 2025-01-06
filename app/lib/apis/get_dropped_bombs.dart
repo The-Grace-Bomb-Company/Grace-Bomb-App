@@ -63,7 +63,7 @@ Future<List<DroppedBomb>> getDroppedBombs(
             json['Title'],
             json['Description'],
             json['Latitude'] + latOffset,
-            json['Longitude'] - lonOffset,
+            json['Longitude'] + lonOffset,
             json['LocationName'],
             dateFormat.parse(json['CreatedDate']),
             json['IsApproved'],
