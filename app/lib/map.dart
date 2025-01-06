@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_animations/flutter_map_animations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:grace_bomb/app_colors.dart';
 import 'package:grace_bomb/app_styles.dart';
 import 'package:grace_bomb/new_bomb_page.dart';
@@ -27,6 +28,55 @@ class MapView extends StatefulWidget {
 }
 
 class MapViewState extends State<MapView> with TickerProviderStateMixin {
+  LatLng _initialPosition = MapView.defaultPosition;
+
+  @override
+  void initState() {
+    super.initState();
+    _determinePosition();
+  }
+
+  Future<void> _determinePosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Test if location services are enabled.
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      // Location services are not enabled, use default position.
+      setState(() {
+        _initialPosition = MapView.defaultPosition;
+      });
+      return;
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        // Permissions are denied, use default position.
+        setState(() {
+          _initialPosition = MapView.defaultPosition;
+        });
+        return;
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      // Permissions are denied forever, use default position.
+      setState(() {
+        _initialPosition = MapView.defaultPosition;
+      });
+      return;
+    }
+
+    // When we reach here, permissions are granted and we can get the position.
+    Position position = await Geolocator.getCurrentPosition();
+    setState(() {
+      _initialPosition = LatLng(position.latitude, position.longitude);
+    });
+  }
+
   final mapController = MapController();
   late final animatedMapController = AnimatedMapController(
     vsync: this,
@@ -79,7 +129,7 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
           child: FlutterMap(
             mapController: animatedMapController.mapController,
             options: MapOptions(
-              initialCenter: MapView.defaultPosition,
+              initialCenter: _initialPosition,
               initialZoom: 15,
               interactionOptions: const InteractionOptions(
                 flags: InteractiveFlag.all ^ InteractiveFlag.rotate,
