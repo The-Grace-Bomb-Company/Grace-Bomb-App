@@ -16,13 +16,24 @@ Future<List<DroppedBomb>> getDroppedBombs(
   double southBoundary,
   double westBoundary,
 ) async {
-  final uri = Uri.https(
-    AppSettings.apiAuthority,
-    'api/getDroppedBombs',
-    {
-      'code': AppSettings.apiCode,
-    },
-  );
+  Uri uri;
+  String endpoint = 'api/getDroppedBombs';
+  if (AppSettings.isDebug) {
+    uri = Uri.http(
+      AppSettings.apiAuthority,
+      endpoint,
+      {},
+    );
+  } else {
+    uri = Uri.https(
+      AppSettings.apiAuthority,
+      endpoint,
+      {
+        'code': AppSettings.apiCode,
+      },
+    );
+  }
+
   Response response;
   try {
     response = await http.get(uri);
@@ -35,6 +46,14 @@ Future<List<DroppedBomb>> getDroppedBombs(
 
   final List<dynamic> parsedJson = jsonDecode(response.body);
   final bombs = parsedJson
+      .where((json) {
+        final latitude = json['Latitude'];
+        final longitude = json['Longitude'];
+        return latitude >= southBoundary &&
+            latitude <= northBoundary &&
+            longitude >= westBoundary &&
+            longitude <= eastBoundary;
+      })
       .map((json) => DroppedBomb(
             json['Id'],
             json['Title'],
@@ -43,14 +62,9 @@ Future<List<DroppedBomb>> getDroppedBombs(
             json['Longitude'],
             json['LocationName'],
             dateFormat.parse(json['CreatedDate']),
+            json['IsApproved'],
           ))
       .toList();
 
-  return bombs
-      .where((bomb) =>
-          bomb.latitude >= southBoundary &&
-          bomb.latitude <= northBoundary &&
-          bomb.longitude >= westBoundary &&
-          bomb.longitude <= eastBoundary)
-      .toList();
+  return bombs;
 }

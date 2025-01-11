@@ -3,3 +3,14 @@ obj
 bin
 local.settings.json
 client-secret.json
+.vscode/extensions.json
+.vscode/settings.json
+.vscode/tasks.json
+.idea/Grace-Bomb-App.iml
+.idea/misc.xml
+.idea/modules.xml
+.idea/vcs.xml
+.idea/caches/deviceStreaming.xml
+.vs/
+__blobstorage__/
+__azurite_*

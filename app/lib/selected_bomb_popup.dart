@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:grace_bomb/app_settings.dart';
 import 'package:grace_bomb/app_colors.dart';
 import 'package:grace_bomb/app_styles.dart';
+import 'package:grace_bomb/app_methods.dart';
 import 'package:grace_bomb/assets.dart';
 import 'package:grace_bomb/dropped_bomb.dart';
+import 'package:grace_bomb/bomb_details_page.dart';
 import 'package:grace_bomb/map.dart';
-import 'package:intl/intl.dart';
-
-final dateFormat = DateFormat('M/d/yy');
 
 class SelectedBombPopup extends StatelessWidget {
   final DroppedBomb bomb;
@@ -27,6 +27,13 @@ class SelectedBombPopup extends StatelessWidget {
     const bombLogoWidth = 40;
     final bodyWidth = screenWidth - margin * 2 - padding * 2;
     final headerWidth = bodyWidth - bombLogoWidth;
+    String bombTitleTemp = '';
+    String bombDescription = AppSettings.pendingApprovalDescription;
+    if (bomb.isApproved) {
+      bombTitleTemp = bomb.title;
+      bombDescription = bomb.description;
+    }
+    final bombTitle = AppMethods.formatBombTitle(bombTitleTemp);
 
     return Stack(children: [
       Positioned(
@@ -45,12 +52,12 @@ class SelectedBombPopup extends StatelessWidget {
                 SvgPicture.asset(Assets.wildBombOnMapSvg),
                 Container(
                   margin: const EdgeInsets.only(left: 5),
-                  width: screenWidth - 80,
+                  width: headerWidth,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '#${bomb.title}',
+                        bombTitle,
                         maxLines: 1,
                         style: AppStyles.heading,
                       ),
@@ -85,7 +92,7 @@ class SelectedBombPopup extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    bomb.description,
+                    bombDescription,
                     maxLines: 4,
                     style: AppStyles.body,
                   ),
@@ -99,7 +106,7 @@ class SelectedBombPopup extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => BombDetailPage(bomb: bomb),
+                        builder: (context) => BombDetailsPage(bomb: bomb),
                       ),
                     );
                   },
@@ -121,62 +128,5 @@ class SelectedBombPopup extends StatelessWidget {
         ),
       ),
     ]);
-  }
-}
-
-class BombDetailPage extends StatelessWidget {
-  final DroppedBomb bomb;
-
-  const BombDetailPage({super.key, required this.bomb});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          children: [
-            SvgPicture.asset(Assets.wildBombWhiteHorizontalSvg),
-            const SizedBox(width: 8.0),
-            Text(
-              ' #${bomb.title}',
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 24.0,
-              ),
-            ),
-          ],
-        ),
-        backgroundColor: const Color(0xFFE85124),
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(
-            bottom: Radius.circular(16.0),
-          ),
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 10),
-            Text(
-              bomb.locationName,
-              style: AppStyles.subHeading,
-            ),
-            const SizedBox(height: 10),
-            Text(
-              dateFormat.format(bomb.createdDate),
-              style: AppStyles.subHeading,
-            ),
-            const SizedBox(height: 12),
-            Text(
-              bomb.description,
-              style: AppStyles.body,
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }

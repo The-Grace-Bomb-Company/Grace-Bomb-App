@@ -5,14 +5,19 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Attach",
+      "name": "Azure Functions Attach",
+      "type": "coreclr",
+      "request": "attach"
+    },
+    {
+      "name": "Dart Attach",
       "request": "attach",
       "type": "dart"
     },
     {
-      "name": "Launch",
+      "name": "Dart Launch",
       "request": "launch",
       "type": "dart"
-    },
+    }
   ]
 }
