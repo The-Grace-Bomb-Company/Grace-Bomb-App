@@ -7,7 +7,7 @@ on:
 
 env:
   AZURE_FUNCTIONAPP_NAME: "GraceBomb-function" # Replace with your Function App name
-  DOTNET_VERSION: "8.x.x" # Set to the .NET version you're using
+  DOTNET_VERSION: "9.x.x" # Set to the .NET version you're using
 
 jobs:
   build-and-deploy:
