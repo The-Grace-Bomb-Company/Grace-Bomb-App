@@ -47,7 +47,7 @@ namespace azure_functions
                         Description = row[4].ToString()!,
                         Id = Guid.Parse(row[5].ToString()!),
                         Title = row[6].ToString()!,
-                        IsApproved = row[7].ToString()! == "1"
+                        IsApproved = row[7].ToString() == "TRUE"
                     });
                 }
                 catch (Exception e)

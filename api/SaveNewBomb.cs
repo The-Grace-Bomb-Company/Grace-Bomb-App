@@ -68,7 +68,7 @@ namespace azure_functions
                 bombData.Description,               // Bomb Description
                 Guid.NewGuid(),                     // Unique ID
                 bombData.Title,                     // Bomb Title
-                bombData.IsApproved ? 1 : 0         // Is Approved                
+                "FALSE"         // Is Approved                
             };
 
             // Append the new row to the Google Sheet
@@ -105,6 +105,5 @@ namespace azure_functions
         public double Latitude { get; set; }
         public double Longitude { get; set; }
         public string LocationName { get; set; } = string.Empty;
-        public bool IsApproved { get; set; }
     }
 }
