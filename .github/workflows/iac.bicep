@@ -43,7 +43,7 @@ resource functionApp 'Microsoft.Web/sites@2023-01-01' = {
   properties: {
     serverFarmId: hostingPlan.id
     siteConfig: {
-      linuxFxVersion: 'DOTNET-ISOLATED|8.0'
+      linuxFxVersion: 'DOTNET-ISOLATED|9.0'
       cors:{
         allowedOrigins: [
           '*'
@@ -84,7 +84,7 @@ resource functionApp 'Microsoft.Web/sites@2023-01-01' = {
         }
         {
           name: 'google_spreadsheet_range'
-          value: 'Grace Bomb App Data!A2:F'
+          value: 'Grace Bomb App Data!A2:H'
         }
       ]
     }
