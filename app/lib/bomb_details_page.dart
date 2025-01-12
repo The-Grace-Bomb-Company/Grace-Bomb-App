@@ -49,25 +49,27 @@ class BombDetailsPage extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 10),
-            Text(
-              bomb.locationName,
-              style: AppStyles.subHeading,
-            ),
-            const SizedBox(height: 10),
-            Text(
-              dateFormat.format(bomb.createdDate),
-              style: AppStyles.subHeading,
-            ),
-            const SizedBox(height: 12),
-            Text(
-              bombDescription,
-              style: AppStyles.body,
-            ),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 10),
+              Text(
+                bomb.locationName,
+                style: AppStyles.subHeading,
+              ),
+              const SizedBox(height: 10),
+              Text(
+                dateFormat.format(bomb.createdDate),
+                style: AppStyles.subHeading,
+              ),
+              const SizedBox(height: 12),
+              Text(
+                bombDescription,
+                style: AppStyles.body,
+              ),
+            ],
+          ),
         ),
       ),
     );

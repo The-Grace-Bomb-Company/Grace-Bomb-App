@@ -18,6 +18,12 @@
       "name": "Dart Launch",
       "request": "launch",
       "type": "dart"
+    },
+    {
+      "name": "Attach to .NET Functions",
+      "type": "coreclr",
+      "request": "attach",
+      "processId": "${command:azureFunctions.pickProcess}"
     }
   ]
 }
