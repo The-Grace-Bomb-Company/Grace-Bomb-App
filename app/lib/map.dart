@@ -30,10 +30,12 @@ class MapView extends StatefulWidget {
 
 class MapViewState extends State<MapView> with TickerProviderStateMixin {
   LatLng _initialPosition = MapView.defaultPosition;
+  late final MapController mapController;
 
   @override
   void initState() {
     super.initState();
+    mapController = MapController();
     _determinePosition();
   }
 
@@ -72,10 +74,10 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
     Position position = await Geolocator.getCurrentPosition();
     setState(() {
       _initialPosition = LatLng(position.latitude, position.longitude);
+      mapController.move(_initialPosition, 13.0);
     });
   }
 
-  final mapController = MapController();
   late final animatedMapController = AnimatedMapController(
     vsync: this,
     duration: const Duration(milliseconds: 500),
